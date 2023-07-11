@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+        <head>
+                <meta charset="utf-8">
+                
+                <title>d4s3</title>
+                
+
+                <link rel="stylesheet" href="../static/css/main.css">
+        </head>
+        <body class="hack">
+                <nav>
+                        <a href="../index.html">[ Home ]</a>
+                        <a href="../projects.html">[ Projects ]</a>
+                        <a href="../writeup.html">[ Write Ups ]</a>
+                        <a href="../scratchpad.html">[ scratchpad ]</a>
+                </nav>
+                
+        <h1>PNG Stego</h1>
+
+<h2>These are some techniques I showed off at a local hacker meetup</h2>
+
+<p>You can find the slides <a href="https://github.com/sudo-d4s3/stego-slides," title="It has more than just PNG stego but PNG stego is the most in depth stego in the slides">here</a></p>
+
+<h2>The PNG File Format Annotated</h2>
+
+<p><img src="../static/pics/png_stego/png_file_format.png" alt="" title="Klepped from PoC||GTFO, created by Corkami"></p>
+
+<h2>Chunk Stuffing</h2>
+
+<h3>Chunks explained</h3>
+
+<p>The PNG format is broken into what it calls &quot;chunks&quot;. There are three or four chunks that are required for the file to be a valid PNG format. These are called &quot;critical chunks&quot;. The three in the annotated hex above are:</p>
+
+<ul>
+<li><strong>IHDR</strong>: Image Header, this <em>must</em> be the first chunk</li>
+<li><strong>IDAT</strong>: Image Data, This is where the pixels are stored</li>
+<li><strong>IEND</strong>: File Trailer, Tells the parser this is the end of the file, data field must be null</li>
+</ul>
+
+<p>Earlier I said their are 3 or 4 critical chunks. The fourth critical chunk is contingent on the color byte in the header being 0x03, which is a palette index color type. This chunk would be the palette index itself.</p>
+
+<p>There are also ancillary chunks that give metadata to tell parsers more specifically how to parse a particular image. There are a ton of ancillary chunks built into the spec. A few we could inject data into are:</p>
+
+<ul>
+<li><p><strong>gAMA</strong>: Gama chunk, This chunk is supposed to get ignored if there is an sRGB or iCCP chunk. The chunk is supposed to be a 4 byte unsigned integer but since it gets ignored we should be able to inject how much every data we want.</p></li>
+<li><p><strong>cHRM</strong>: Chromaticites chunk, Also ignored if there is an sRGB or iCCP chunk so we should be able to inject whatever we want in this chunk.</p></li>
+<li><p><strong>tEXt</strong>: Text chunk, this chunk has a specific format that has to be followed for it to be a valid chunk. Invalid ancillary chunks are supposed to be ignored but some parsers will throw an error at the user so we should follow it to prevent this. </p>
+
+<ul>
+<li>Keyword:        1-79 bytes (character string)</li>
+<li>Null separator: 1 byte</li>
+<li>Text:           n bytes (character string)</li>
+</ul>
+
+<p>There are predefined keywords that we can use. The biggest problem with using these keywords is windows&#39; explorer.exe because it&#39;ll be shown in the properties tab.</p>
+
+<ul>
+<li>Title: Short (one line) title or caption for image</li>
+<li>Author: Name of image&#39;s creator</li>
+<li>Description:  Description of image (possibly long)</li>
+<li>Copyright: Copyright notice</li>
+<li>Creation Time: Time of original image creation</li>
+<li>Software: Software used to create the image</li>
+<li>Disclaimer: Legal disclaimer</li>
+<li>Warning: Warning of nature of content</li>
+<li>Source: Device used to create the image</li>
+<li>Comment: Miscellaneous comment; conversion from GIF comment</li>
+</ul></li>
+<li><p><strong>zTXt</strong>: tEXt chunk but compressed</p></li>
+<li><p><strong>iTXt</strong>: tEXt chunk but utf8 encoded</p></li>
+</ul>
+
+<h3>Custom Chunks</h3>
+
+<p>The PNG format allows us to create our own chunks. The spec calls them &quot;private chunks&quot;. There is a specific format we need to follow with the naming. The letters themself don&#39;t matter but the casing does.
+<div class="table">
+<pre>
++-----------+---------------+---------------+--------------+------------------+
+|           | First letter  | Second letter | Third Letter | Fourth Letter    |
++===========+===============+===============+==============+==================+
+| Uppercase | Critical      | Public Chunk  | Reserved     | Not Safe to Copy |
+|           | Chunk         |               |              |                  |
++-----------+---------------+---------------+--------------+------------------+
+| Lowercase | Ancillary     | Private Chunk | N/A          | Safe to Copy     |
+|           | Chunk         |               |              |                  |
++-----------+---------------+---------------+--------------+------------------+
+</pre>
+</div></p>
+
+<p>Most of the chunk options I&#39;ve already talked about. The fourth one is a bit weird since it&#39;s for image editors. &quot;Safe to Copy&quot; means that if you edit the image the chunk will get transfered over to the new image. It is telling the editor the data in the chunk isn&#39;t dependent on the pixel data.</p>
+
+<p>The chunk I used as an example was <code>stEg</code>. </p>
+
+<ul>
+<li><strong>s</strong>: Lowercase -&gt; Ancillary chunk</li>
+<li><strong>t</strong>: Lowercase -&gt; Private chunk</li>
+<li><strong>E</strong>: Uppercase -&gt; Required</li>
+<li><strong>g</strong>: Lowercase -&gt; Safe to Copy</li>
+</ul>
+
+<h3>Demo Code</h3>
+
+<p>You can find my demo code <a href="https://github.com/sudo-d4s3/stego-slides/tree/main/demo_files/chunk_stuffing">here</a>.</p>
+
+<h2>LSB</h2>
+
+<p><img src="../static/pics/png_stego/lsb_bin.png" style="width:50%;height:auto"></p>
+
+<p>In the annotated hex above its using color type 0x02 so every pixel is 3 bytes, one for r, g, and b. This means we can have 3 bits per pixel. So if our image is 500x500 we have 250,000 pixels to work with or 750,000 bits (93750 bytes, ~93 kilobytes). So with this method our paylod must be considerably smaller than our png. The colors also won&#39;t perceptibly change.</p>
+
+<p><stamp>2023/7/10</stamp></p>
+
+
+        </body>
+</html>
