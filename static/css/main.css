@@ -134,12 +134,12 @@ a:hover {
 }
 
 .table aside {
-        flex: 0 0 25%;
+        flex: 0 0 20%;
         box-sizing: border-box;
 }
 
 .table main {
-        flex: 0 0 75%;
+        flex: 0 0 80%;
         box-sizing: border-box;
 }
 
@@ -163,7 +163,6 @@ a:hover {
 .hack code {
         display: inline-block;
         background-color: #332233;
-
 }
 
 .hack code::before {
@@ -172,4 +171,28 @@ a:hover {
 
 .hack code::after {
         content: "`";
+}
+
+.block_code {
+	padding: .5em;
+        display: block;
+        background-color: #332233;
+	width: 58.2%;
+	margin: auto;
+}
+
+.block_code::before {
+	content: "```"
+}
+
+.block_code::after {
+	content: "```"
+}
+
+.no-tick::before {
+	content: "" !important
+}
+
+.no-tick::after {
+	content: "" !important
 }
