@@ -30,7 +30,7 @@
 
 <p>RSA is conceptually simple. There are two keys, a public and a private key. The public key can be given out freely but the private key should be protected and never given out to anyone.</p>
 
-<p>Say Alice wants to talk to Bob but they are communicating over a monitored line, meaning anything they send will be recieved by a third party. If they don&#39;t want to have that third party knowing what they are saying they can send each other their public key over that monitored line. </p>
+<p>Say Alice wants to talk to Bob but they are communicating over a monitored line, meaning anything they send will be received by a third party. If they don&#39;t want to have that third party knowing what they are saying they can send each other their public key over that monitored line. </p>
 
 <p>After they send their public keys over that line they can then encrypt their messages using the other&#39;s public key. So for example if Alice wants to send a message to Bob she would encrypt the message using Bob&#39;s public key and send it over the monitored line. Bob would then decrypt the message using his private key.</p>
 
@@ -74,11 +74,11 @@
 
 <h3>OpenSSL Baseline</h3>
 
-<p>Man thats alot of math talk, if you&#39;re anything like me you need examples. Before we get into the nitty-gritty with python lets get a baseline with the standard Openssl tool.</p>
+<p>Man that&#39;s a lot of math talk, if you&#39;re anything like me you need examples. Before we get into the nitty-gritty with python lets get a baseline with the standard Openssl tool.</p>
 
 <p>First lets generate the private key with a key length of 2048: <code>openssl genrsa 2048</code>. This will output the key to stdout to put this in a file you can either use shell redirects or the <code>-out</code> flag.</p>
 
-<p>Here is the key I generated. (Please note this key was generated for the perposes of explaination. I don&#39;t use this key and you shouldn&#39;t either.)
+<p>Here is the key I generated. (Please note this key was generated for the purposes of explanation. I don&#39;t use this key and you shouldn&#39;t either.)
 <pre><p class="block_code">
 -----BEGIN PRIVATE KEY-----
 MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCkt86Lz34Mjp+o
@@ -114,7 +114,7 @@ U1rkHQ3prpmlXWvkpwJ6OQ82yA4ZQ9DJkYFn9raXS2B239xH0VoqW2fsc4QxieH2
 To convert this to decimal we can do some bashfu. The modulus is the easy part because there is a <code>-modulus</code> flag we can use to output the modulus in hex without anything else or any colons: <code>openssl rsa -in private.pem -modulus -noout | sed -e &#39;s/Modulus=/ibase=16; /&#39; | bc</code></p>
 
 <ul>
-<li>Original Modulos output: <strong>Modulus=C9BF0AFE1A15A83A8CD68D12C11CB6A944EBF38D62A33F84B179052E875F1F57441A85F932BBB67EB03A59ABC93D35E9DB5B69476BFBAD9F7F13704C1FBB9CE2BE5B0F065653DAA8B21A25858AA2B7225BCE31F81216E71DCF410ADA5A838B6E60DE49DA632A68D0BB9BC1D0D63CEB27AAAB8DCE7193E772CCF93CA6E0387948381A2786BD42397AB15B247C2FDBB050C6B0BBDBD2ADE1803064BE845382738B2BF2232DEB2EFE56077A4A00CDC693D0F65DC6DAC002F2EEC455D23B53D5162103F7FD43AE02D98FC41DF288DE060AF5AAE669337C7B8A01EFEC70FDE9BFCE3B36798307E697041D9289291F601C14F336C0B7888D2F312ABCBEE7163B88C9CF</strong></li>
+<li>Original Modulus output: <strong>Modulus=C9BF0AFE1A15A83A8CD68D12C11CB6A944EBF38D62A33F84B179052E875F1F57441A85F932BBB67EB03A59ABC93D35E9DB5B69476BFBAD9F7F13704C1FBB9CE2BE5B0F065653DAA8B21A25858AA2B7225BCE31F81216E71DCF410ADA5A838B6E60DE49DA632A68D0BB9BC1D0D63CEB27AAAB8DCE7193E772CCF93CA6E0387948381A2786BD42397AB15B247C2FDBB050C6B0BBDBD2ADE1803064BE845382738B2BF2232DEB2EFE56077A4A00CDC693D0F65DC6DAC002F2EEC455D23B53D5162103F7FD43AE02D98FC41DF288DE060AF5AAE669337C7B8A01EFEC70FDE9BFCE3B36798307E697041D9289291F601C14F336C0B7888D2F312ABCBEE7163B88C9CF</strong></li>
 <li>Bashfu oneliner output: <strong>25468106082921794971929409506903775758728045423753973170996959875345803013722474541045565883815682177434955104383906639041388567454940137687663026589323306165475698385730572512046618474721376990576162384898600637901272248576695044354175677353663993053604053214742119796047637103645642070127143302862228807476663080956490039342214965817463705457380197342311783922066124952133161913392372304617410084643208670689823597752814889511157649686062558985502814811733665601943693667553357863982055267040184966104535775272478573916097964350996183228704435845314131797767367898143161396024687771146955440326737475094160322644431</strong></li>
 </ul>
 
@@ -136,7 +136,7 @@ If I knew more <code>awk</code> this oneliner would probably be shorter. Honestl
 <li><strong>awk &#39;/prime1/{f=1;next} /prime2/{f=0} f&#39;</strong> cuts out and prints only what is inbetween the strings &quot;exponent1&quot; and &quot;exponent2&quot;, this is our hex that we have to process a bit more.</li>
 <li><strong>sed -z &#39;s/\n//g&#39;</strong> This removes all the break lines.</li>
 <li><strong>tr &#39;[:lower:]&#39; &#39;[:upper:]&#39;</strong> This converts all the lowercase characters to uppercase, this is important because <code>bc</code> requires hex to be uppercase.</li>
-<li><strong>sed -e &#39;s/    /ibase=16; /&#39;</strong> This replaces the first soft-tab (four spaces) with the string &quot;ibase=16; &quot; (that space is important). This is to tell <code>bc</code> what the incomming number&#39;s base is.</li>
+<li><strong>sed -e &#39;s/    /ibase=16; /&#39;</strong> This replaces the first soft-tab (four spaces) with the string &quot;ibase=16; &quot; (that space is important). This is to tell <code>bc</code> what the incoming number&#39;s base is.</li>
 <li><strong>sed -e &#39;s/    //g&#39;</strong> This removes the rest of the soft-tabs.</li>
 <li><strong>sed -e &#39;s/://g&#39;</strong> This removes all of the colons.</li>
 <li><strong>echo $(&lt;/dev/stdin)</strong> This takes everything its given and echos it back. The reason for this is because <code>bc</code> requires the file its given to be breakline terminated and when we removed all the breaklines we made it NULL byte terminated and <code>echo</code> will automatically breakline terminate what it&#39;s given.</li>
@@ -170,7 +170,7 @@ q =
 <span style="color:rgb(117, 113, 94); font-weight:400;background:rgba(0, 0, 0, 0);"># Calculating &quot;n&quot;</span>
 n = p*q
 
-<span style="color:rgb(117, 113, 94); font-weight:400;background:rgba(0, 0, 0, 0);"># To calculate lambda(n) we can use the extended euclidian algorithm</span>
+<span style="color:rgb(117, 113, 94); font-weight:400;background:rgba(0, 0, 0, 0);"># To calculate lambda(n) we can use the extended euclidean algorithm</span>
 <span style="color:rgb(117, 113, 94); font-weight:400;background:rgba(0, 0, 0, 0);"># This is a recursive implementation</span>
 <span style="color:rgb(117, 113, 94); font-weight:400;background:rgba(0, 0, 0, 0);"># return (g, x, y) such that a*x + b*y = g = gcd(a, b)</span>
 <span style="color:rgb(249, 38, 114); font-weight:700;background:rgba(0, 0, 0, 0);">def</span> <span class="hljs-title function_">egcd</span>(<span style="color:rgb(221, 221, 221); font-weight:400;background:rgba(0, 0, 0, 0);">a, b</span>):
@@ -349,7 +349,7 @@ k6b6SQIEcei5sQIFALlribw=
 
 <p>Since Bob sent his public key over the line we are monitoring we have a copy of that key and we just generated a private key from it. Testing to see if it works: <code>openssl pkeyutl -decrypt -inkey cracked_key.pem -pkeyopt rsa_padding_mode:none -in cipher.txt -out clear.txt</code></p>
 
-<p>We now have a file called &quot;clear.txt&quot; that shows &quot;Hi World&quot; (Null terminated ofcourse).</p>
+<p>We now have a file called &quot;clear.txt&quot; that shows &quot;Hi World&quot; (Null terminated of course).</p>
 
 <p><stamp>2023/07/14</stamp></p>
 

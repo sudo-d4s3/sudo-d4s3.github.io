@@ -24,7 +24,7 @@
 
 <p>I&#39;m using the firmware for the <a href="https://eu.dlink.com/uk/en/products/dcs-7410-securicam-day-and-night-outdoor-network-camera">dcs-7410</a>.</p>
 
-<p>I chose this firmware because I was told by a friend there is a vulnerability that someone with little experiance could find and exploit.</p>
+<p>I chose this firmware because I was told by a friend there is a vulnerability that someone with little experience could find and exploit.</p>
 
 <p>This is the first time I&#39;ve attempted firmware reverse engineering.</p>
 
@@ -60,23 +60,23 @@
 
 <p>Now I&#39;ve personally seen more lighttpd in my hobby development boards and SOCs, however we can clearly see that busybox is on this system so we should probably look for httpd first.</p>
 
-<p>Normally you could just do a banner grab on the website to get the server but as I dont have the ip cam physically I would need to emulate the cam which I wont do that now but I will later.</p>
+<p>Normally you could just do a banner grab on the website to get the server but as I don&#39;t have the ip cam physically I would need to emulate the cam which I wont do that now but I will later.</p>
 
 <p><br>
 <img src="../static/pics/dlink_ipcam_reverse_engineering/reverse_engineer4.png" alt=""></p>
 
 <p>I&#39;m using <code>find</code> instead of <code>ls -R</code> because <code>find</code> will give you the directory the file is in and I&#39;m using <code>grep</code> instead of <code>find -name</code> because <code>find -name</code> is very literal and <code>grep</code> will just match the string.</p>
 
-<p>Now the results are interesting because I found lighttpd instead of httpd even when busybox is used on the camera. this is great for me because I&#39;ve used lighttpd alot more than httpd or thttpd.  </p>
+<p>Now the results are interesting because I found lighttpd instead of httpd even when busybox is used on the camera. This is great for me because I&#39;ve used lighttpd a lot more than httpd or thttpd.  </p>
 
 <p><br>
 There is nothing interesting in lighttpd.conf but it does <code>include</code> lighttpd-inc.conf</p>
 
 <p><img src="../static/pics/dlink_ipcam_reverse_engineering/reverse_engineer5.png" alt=""></p>
 
-<p>Now when I do a <code>file</code> on lighttpd-inc.conf it says that its a symlink connected to /tmp/lighttpd-inc.conf, I did a <code>ls</code> on it to make it easier to read. however when you <code>ls</code> in the /tmp/ folder there is nothing there.</p>
+<p>Now when I do a <code>file</code> on lighttpd-inc.conf it says that its a symlink connected to /tmp/lighttpd-inc.conf, I did a <code>ls</code> on it to make it easier to read. However when you <code>ls</code> in the /tmp/ folder there is nothing there.</p>
 
-<p>Now if we go back to the images we can see a swap file, however when I <code>file</code> it says its a filesystem now if I try to mount the image it throws an error. If I take a longer look I can see the filesystem is in big endian, the filesystem on my computer is little endian so thats the issue.</p>
+<p>Now if we go back to the images we can see a swap file, however when I <code>file</code> it says its a filesystem now if I try to mount the image it throws an error. If I take a longer look I can see the filesystem is in big endian, the filesystem on my computer is little endian so that&#39;s the issue.</p>
 
 <p><br>
 <img src="../static/pics/dlink_ipcam_reverse_engineering/reverse_engineer6.png" alt=""></p>
@@ -193,7 +193,7 @@ This query string is then piped into a <code>sed</code> command.
 
 <h3>Synopsis</h3>
 
-<p>So this was the first time I&#39;ve reverse engineered firmware. I intentionally went with old firmware and D-link because I wanted something easy to start with and old firmware is bound to have vulnerabilities and D-link doesnt have a very good reputation when it comes to security.</p>
+<p>So this was the first time I&#39;ve reverse engineered firmware. I intentionally went with old firmware and D-link because I wanted something easy to start with and old firmware is bound to have vulnerabilities and D-link doesn&#39;t have a very good reputation when it comes to security.</p>
 
 <p>I was not expecting the command injection to be that easy. I have also never seen command injection like that outside of CTFs or other labs.</p>
 

@@ -44,7 +44,7 @@
 
 <ul>
 <li><p><strong>gAMA</strong>: Gama chunk, This chunk is supposed to get ignored if there is an sRGB or iCCP chunk. The chunk is supposed to be a 4 byte unsigned integer but since it gets ignored we should be able to inject how much every data we want.</p></li>
-<li><p><strong>cHRM</strong>: Chromaticites chunk, Also ignored if there is an sRGB or iCCP chunk so we should be able to inject whatever we want in this chunk.</p></li>
+<li><p><strong>cHRM</strong>: Chromaticity chunk, Also ignored if there is an sRGB or iCCP chunk so we should be able to inject whatever we want in this chunk.</p></li>
 <li><p><strong>tEXt</strong>: Text chunk, this chunk has a specific format that has to be followed for it to be a valid chunk. Invalid ancillary chunks are supposed to be ignored but some parsers will throw an error at the user so we should follow it to prevent this. </p>
 
 <ul>
@@ -88,7 +88,7 @@
 </pre>
 </div></p>
 
-<p>Most of the chunk options I&#39;ve already talked about. The fourth one is a bit weird since it&#39;s for image editors. &quot;Safe to Copy&quot; means that if you edit the image the chunk will get transfered over to the new image. It is telling the editor the data in the chunk isn&#39;t dependent on the pixel data.</p>
+<p>Most of the chunk options I&#39;ve already talked about. The fourth one is a bit weird since it&#39;s for image editors. &quot;Safe to Copy&quot; means that if you edit the image the chunk will get transferred over to the new image. It is telling the editor the data in the chunk isn&#39;t dependent on the pixel data.</p>
 
 <p>The chunk I used as an example was <code>stEg</code>. </p>
 

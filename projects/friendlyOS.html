@@ -23,7 +23,7 @@
 <p>I had an idea recently to build a linux distro for linux newbies.
 I&#39;m one of those weirdos who build linux distros for fun.
 Usually I do it to see if I can implement an idea I found on some other distro and other times its to build a bespoke distro for some embedded machine.
-Some of the idea&#39;s I&#39;ve tried and to various degrees suceeded in: ripping GNU out of linux, changing the default file structure, and I&#39;m currently working on implementing some of the ideas from nix and guix.
+Some of the idea&#39;s I&#39;ve tried and to various degrees succeeded in: ripping GNU out of linux, changing the default file structure, and I&#39;m currently working on implementing some of the ideas from nix and guix.
 As you can imagine these distros aren&#39;t very user friendly, you really have to know what you are doing to not rip your hair out in frustration while using them.</p>
 
 <h3>Basic Ideas and Goals</h3>
@@ -34,11 +34,11 @@ As you can imagine these distros aren&#39;t very user friendly, you really have 
 
 <p>AppImages are essentially a small loader binary with a rootfs attached that has everything that would be needed to run a particular app. This means that for the most part they don&#39;t require any special software to run, unlike say snaps or flatpacks. Now this might not be that big of a pro since we&#39;re going to be running a daemon anyways.</p>
 
-<p>For a Proof-of-Concept I think the <a href="https://github.com/TheAssassin/AppImageLauncher">AppImageLauncher</a> would suffice. It&#39;s a daemon that watches the &quot;Applications&quot; folder for any new AppImage and it then handles setting the AppImage to be excutable, the creation of .desktop files for integration into start menu and app launchers and it handles any permissions issues you might run into.</p>
+<p>For a Proof-of-Concept I think the <a href="https://github.com/TheAssassin/AppImageLauncher">AppImageLauncher</a> would suffice. It&#39;s a daemon that watches the &quot;Applications&quot; folder for any new AppImage and it then handles setting the AppImage to be executable, the creation of .desktop files for integration into start menu and app launchers and it handles any permissions issues you might run into.</p>
 
-<p>Now since most people use Windows for their operating system most people are used to going to various websites to install software. This creates a problem for us for a couple reasons: Websites that auto-detect a user is using linux will likely give them a .deb or .rpm even if there is an AppImage avalible, and alot of software developers will only support a handfull of distro-specific package formats (.deb and .rpm). </p>
+<p>Now since most people use Windows for their operating system most people are used to going to various websites to install software. This creates a problem for us for a couple reasons: Websites that auto-detect a user is using linux will likely give them a .deb or .rpm even if there is an AppImage available, and a lot of software developers will only support a handful of distro-specific package formats (.deb and .rpm). </p>
 
-<p>One of the ways we can get around this is by having an appstore. macOS users are already used to this for Apple-sanctioned software but I&#39;m really not sure how many Windows and Linux users actually use their respective appstores. Since this distro is aiming for average people my assumption is that they would use the provided appstore instead of seeking out binaries on the web aslong as the appstore is easy to use and access. The thought process behind this assumption is that theoretically they <em>know</em> it&#39;s not Windows so they think that they have to install software a special way and if we point out the appstore that tells them the &quot;special&quot; way to install software even though going to a website and downloading a regular package and just double clicking would still be possible based on my helpdesk experience I don&#39;t think the average person would think to do that. There are a couple different AppImage stores, I need to do more research to find the one I want to use for this project.</p>
+<p>One of the ways we can get around this is by having an appstore. macOS users are already used to this for Apple-sanctioned software but I&#39;m really not sure how many Windows and Linux users actually use their respective appstores. Since this distro is aiming for average people my assumption is that they would use the provided appstore instead of seeking out binaries on the web as long as the appstore is easy to use and access. The thought process behind this assumption is that theoretically they <em>know</em> it&#39;s not Windows so they think that they have to install software a special way and if we point out the appstore that tells them the &quot;special&quot; way to install software even though going to a website and downloading a regular package and just double clicking would still be possible based on my helpdesk experience I don&#39;t think the average person would think to do that. There are a couple different AppImage stores, I need to do more research to find the one I want to use for this project.</p>
 
 <p>This is the main goal of this project. Use AppImages for any user-installed software and setup a store for ease of use.</p>
 
@@ -52,13 +52,13 @@ As you can imagine these distros aren&#39;t very user friendly, you really have 
 
 <h3>POC Implementation Ideas</h3>
 
-<p>I&#39;m not really interested in bootstrapping this distro as of now so I&#39;ll probably use some minimal distro to build off of. Probably Arch. If this does get passed the proof-of-concept phase I&#39;d like to either build off of some immutable distro or bootstrap my own. An immutable distro would allow for better version control over the filesystem which facillitates easier rollbacks incase something breaks and it prevents any accidental corruption from the user. (Reminder <code>dd</code> is also known as &quot;disk destroyer&quot; and <code>rm -rf /</code> is easier than deleting system32)</p>
+<p>I&#39;m not really interested in bootstrapping this distro as of now so I&#39;ll probably use some minimal distro to build off of. Probably Arch. If this does get past the proof-of-concept phase I&#39;d like to either build off of some immutable distro or bootstrap my own. An immutable distro would allow for better version control over the filesystem which facilitates easier rollbacks in case something breaks and it prevents any accidental corruption from the user. (Reminder <code>dd</code> is also known as &quot;disk destroyer&quot; and <code>rm -rf /</code> is easier than deleting system32)</p>
 
-<p>I&#39;m thinking about using plasma as the de just for the poc. I might stick with it if it goes farther than poc but honestly its a bit overwhelming to try and maintain with config scripts. It&#39;s easy to config in the provided gui so it would be good from an end user perspective but setting the base config is a bit daunting.</p>
+<p>I&#39;m thinking about using plasma as the DE just for the poc. I might stick with it if it goes farther than poc but honestly its a bit overwhelming to try and maintain with config scripts. It&#39;s easy to config in the provided gui so it would be good from an end user perspective but setting the base config is a bit daunting.</p>
 
 <p>I remember there being quite a few mac-like app docks, I&#39;ll throw one of those in for the lolz.</p>
 
-<p>I am keeping gaming in mind so I need to test steam in an appimage and determin whether to use lutris or hero for non-steam games. </p>
+<p>I am keeping gaming in mind so I need to test steam in an appimage and determine whether to use lutris or hero for non-steam games. </p>
 
 <h3>Things to do if this project expands</h3>
 
