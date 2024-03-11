@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+        <head>
+                <meta charset="utf-8">
+                
+                <title>d4s3</title>
+                
+
+                <link rel="stylesheet" href="../static/css/main.css">
+        </head>
+        <body class="hack">
+                <nav>
+                        <a href="../index.html">[ Home ]</a>
+                        <a href="../projects.html">[ Projects ]</a>
+                        <a href="../writeup.html">[ Write Ups ]</a>
+                        <a href="../scratchpad.html">[ scratchpad ]</a>
+                </nav>
+                
+        <h1>Shell on the Border 2023</h1>
+
+<h2>What is Shell on the Border?</h2>
+
+<p>Shell on the Border is a CTF in Fort Smith Arkansas. This year my team was a supergroup composed of 3 different Jolt teams and we got 1st place.
+Shell on the Border is put on by FS2600.</p>
+
+<p>Shell on the Border was really fun. Day 1 was talks and workshops. I had a talk on reverse engineering embedded firmware. You can see the slides here: <a href="https://github.com/sudo-d4s3/nrf24-firmware-slides">https://github.com/sudo-d4s3/nrf24-firmware-slides</a>. My talk was very niche and alot of the people who were at my talk had an eyes glazed over look. I tried making the talk accessible for people who don&#39;t know anything about hardware or how to interface with it. I&#39;m not sure if it wasn&#39;t accessible enough or if it was just so niche that people weren&#39;t really interested in it. There was one person who seemed genuinely interested and he just so happened to be a Jolt judge who makes programming challenges.</p>
+
+<h3>CTF Straight out of Hackers 1995</h3>
+
+<p>The venue was an old school arcade. Everytime I needed a break from the CTF I played some Time Crisis. There were projectors projecting random animations on the ceiling. There was a projector screen that was playing movies from hacker culture. Some of my favorites were Computer Boy (a Matrix Spoof), and Max Headroom (which I&#39;ve never seen before). We also streamed DJ pfeif&#39;s radio show: <a href="https://djpfeif.com">https://djpfeif.com</a> who had a ton of hidden flags in his show. The entire vibe was modeled after the Cyberdelia from Hackers.</p>
+
+<h3>BYOCTF</h3>
+
+<p>The actual ctf was really cool. Shell on the Border used a CTF framework developed by Shyft from FS2600. You can find the code here: <a href="https://github.com/ShyftXero/byoctf_discord">https://github.com/ShyftXero/byoctf_discord</a>. It uses a Discord bot to interact with the server but the ArkanSec folks are creating a web frontend for Sp4rkcon. This framework allows players to bring their own challenges. When you bring a challenge you get a portion of the points each time it&#39;s solved. (Read the README to see how they handle perverse incentives.)</p>
+
+<h3>I broke the Challenge Creator.</h3>
+
+<p>The challenge I brought was a malbolge challenge. I ended up messing up a lot with this challenge. When I made the challenge I forgot to actually add the challenge string. My flag had an <code>&amp;</code> and the creator url encoded it and I didn&#39;t realize this until after I submitted the challenge.</p>
+
+<h3>Quickhacks</h3>
+
+<p>One of my favorite parts of Shell on the Border was a stage that had timed challenges. The time was based on the how long the song that played when you start the challenge is. These challenges had an insane amount of points but they lost points on each attempt even if it was a successful attempt. My team was the first up on stage because we don&#39;t care if people see us mess up and we wanted the most amount of points we could get.</p>
+
+<p>One of the challenges that I did you had 3 minutes to execute a binary. You were dropped into a container that had 2 binaries. When running one it executed and printed &quot;Hack The Planet!&quot;. When running the other ld threw an error. this told me the magic bytes were missing. I used xxd and vim to grab them from the working binary and prepend them to the non-working binary. Then executed it and got the flag. This took 3 attempts to do it in 3 minutes.</p>
+
+<p>One of the challenges that my teammate did you had 5 minutes to find the flag in the url. Each page had a list of hyperlinks that were a-z. He used wget to clone the entire website then used some bashfu to find the longest file path. Then used <code>sed</code> to remove the wacks. This took 2 attempts.</p>
+
+<p>One where I can&#39;t take all the credit but I was the one on stage at the time we had a binary we had to reverse engineer in Ghidra. This was a copy of an existing challenge but this was worth more points (7k iirc) and had a 7 minute time limit. The original challenge I worked with a teammate because he is really good at quickly reading the code ghidra outputs and I know how to use ghidra. The binary had 3 functions that were stuck in an infinate loop so you had to <code>jmp</code> to a specific point in each function to bypass the infinate loop while still executing the function properly because they each contributed to decrypting the flag. After we had a few runs in the original challenge I tried it on stage. It took 4 attempts to do it in 7 minutes.</p>
+
+<h3>We won the lotto ... with bots</h3>
+
+<p>I didn&#39;t do this challenge my teammate did. There was a webserver with a lottery system where if you got the winning numbers it gave you raw points instead of a flag. It gave a max of 2k points if you let it build up and you could keep winning if you kept getting the correct lotto numbers. My teammate figured out the seed and created a script to keep winning. We were getting 20 points every 30 seconds at this point. Near the end of the day he turned it into a go program and threw it on a vps to run overnight. One of the otherteams figured out what we were doing and did the same thing but also figured out that you could have multiple entries. In the scenario where there are multiple winners the pot gets split evenly between the entries. So if you have 2 entries and someone else only has 1 the points get split evenly between each entry so you actually get two thirds of the points while the other team only gets one third. So this team caught up over night. When we got back we started doing the same thing, at some point we kept upping the ante and we had over a million entries per lotto session. We also fonud out that even though the server was being served by caddy it was also running on the wsgi was also avalible. So we started DDOSing the caddy server and sending our entries to wsgi directly. (We asked the organizers and they gave us their blessing.) Some of their entries still got through but not all of them. At the end of the CTF we were getting 0.4 points every 30 seconds.</p>
+
+<h3>What Now?</h3>
+
+<p>Shell on the Border was a lot of fun. I have some ideas for BYOCTF at Sp4rkcon in April such as a shift cipher that shifts based on the position of the character and a server that only lets you on when the evil bit is set.</p>
+
+<p><stamp>2024/1/1</stamp></p>
+
+
+        </body>
+</html>

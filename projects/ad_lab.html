@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+        <head>
+                <meta charset="utf-8">
+                
+                <title>d4s3</title>
+                
+
+                <link rel="stylesheet" href="../static/css/main.css">
+        </head>
+        <body class="hack">
+                <nav>
+                        <a href="../index.html">[ Home ]</a>
+                        <a href="../projects.html">[ Projects ]</a>
+                        <a href="../writeup.html">[ Write Ups ]</a>
+                        <a href="../scratchpad.html">[ scratchpad ]</a>
+                </nav>
+                
+        <h1>My Active Directory Lab</h1>
+
+<h2>Also Running Wazuh and Caldera</h2>
+
+<h3>WIP</h3>
+
+<h3>Why build a lab?</h3>
+
+<p>I recently got a position as a Security Analyst where I&#39;m the unofficial Red Teamer. Having a lab environment allows me to demo attacks or wacky ideas I have. I&#39;ve also wanted a lab environment for a while but never had any motivation to make one.</p>
+
+<h3>Infrastructure</h3>
+
+<p>At Shell on the Border I went to a workshop on Advanced AD Pentesting techniques and the person giving the workshop recommended <a href="https://github.com/Orange-Cyberdefense/GOAD">Game of Active Directory</a> as a lab environment.
+I have a local Proxmox cluster already which is running my network and media servers. I also had a minipc laying around not doing anything so I gave it a tb ssd, 32gb of ram and threw Proxmox on it.
+GOAD is pretty good as a lab environment because it has 2 forests, 3 domains, 3 domain controllers, and 2 servers. (5 total VMs)</p>
+
+<h3>Building GOAD out</h3>
+
+<p>The instructions for building GOAD on Proxmox aren&#39;t the greatest. They don&#39;t explain what they are doing until later so you run into some issues when you have to modify it for your environment. The firewall rules weren&#39;t explained. Packer and Terraform didn&#39;t work without some tweaks. It wanted to make a backup of the templates to &#39;local&#39; instead of &#39;local-lvm&#39; and I wasn&#39;t able to figure out where that was being set so I ended up allowing backups to be saved to &#39;local&#39;. I had to change the adapter in the ansible inventory file. I think this was a windows issue not a GOAD issue but mssql randomly didn&#39;t work on one of the servers so I had to uninstall and reinstall it. </p>
+
+<p>Reading this all back I just condensed like 15 hours worth of work and pain into a few sentences and that makes me feel bad. You can read my full notes <a href="../static/txt/projects/ad_lab/GOAD-notes.txt">here</a>.</p>
+
+<h3>Wazuh</h3>
+
+<p>My coworker stood up a <a href="https://github.com/wazuh/wazuh">Wazuh</a> instance. Wazuh is an opensource XDR/SIEM built on top of ELK (Elastic Search, Logstash, Kibana). One of the servers has Defender disabled so I threw a Wazuh agent on it so we can play with it in an environment where were know malicious things will happen.</p>
+
+<h3>Caldera</h3>
+
+<p>I created another VM in the GOAD environment as my Caldera server. <a href="https://github.com/mitre/caldera">Caldera</a> is an opensourse BAS (breach and attack simulation) software. I&#39;m comparing this to other BAS software and one that I&#39;m particularly interesting in comparing it to is Pentera. Pentera is agentless while Caldera is agent based. To get Caldera to work similarly I installed an agent on the Caldera server and created custom ability for the initial access plugin to remote into a machine and install an agent.</p>
+
+<p>The adversaries Caldera comes with are super basic and can&#39;t do much. The adversaries that come with the emu plugin don&#39;t really work. They require very specific parameters to be met to work. Such as a specific c2 ip, files in specific locations, specific users to exist.</p>
+
+<p>This means Caldera requires quite a bit of elbow grease but once you get it setup it works really well. The ttps come from atomic red team so you can string a lot together to make a custom adversary.</p>
+
+<p><stamp>2024/03/10</stamp></p>
+
+
+        </body>
+</html>

@@ -16,7 +16,15 @@
                         <a href="scratchpad.html">[ scratchpad ]</a>
                 </nav>
                 
-        <h1>Netcat Webserver</h1>
+        <h1>Strip everything except ascii from Text files</h1>
+
+<p>A really quick way of doing this is to use <code>strings</code>. However this will strip whitespace characters.</p>
+
+<p>If you need whitespace characters intact you can use this:</p>
+
+<p><code>cat &lt;file&gt; | tr -d &quot;[:cntrl:]&quot; | iconv -c -f utf-8 -t ascii -</code></p>
+
+<h1>Netcat Webserver</h1>
 
 <p><code>while true; do echo -e &quot;HTTP/1.1 200 OK\n\n&quot; $(cat index.html) | nc -lp 8080 -q 1; done</code></p>
 
@@ -50,7 +58,10 @@
 <li><strong>--domains</strong>:        make sure you only crawl the domains you want to (don&#39;t want to accidentally crawl the whole internet)</li>
 </ul>
 
-<h1>This is a note</h1>
+<h1>Python One-Liners</h1>
+
+<p>Takes a list of urls and formats them in markdown
+<code>python -c &quot;import sys; from urllib.parse import urlsplit; print(&#39;&#39;.join([f\&quot;[{urlsplit(line.strip()).path.lstrip(&#39;/&#39;)}]({line.strip()})\n\&quot; for line in sys.stdin]))&quot;</code></p>
 
 <h1>This is a different note</h1>
 
