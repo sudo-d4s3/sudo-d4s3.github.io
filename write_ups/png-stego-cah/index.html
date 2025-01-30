@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="https://blog.d4s3.xyz/css/main.css" />
+	</head>
+	<body class='hack'>
+		<nav>
+			
+			<a href="https:&#x2F;&#x2F;blog.d4s3.xyz/"><span itemprop="name">[ Home ]</span></a>
+			
+			<a href="https:&#x2F;&#x2F;blog.d4s3.xyz/projects"><span itemprop="name">[ Projects ]</span></a>
+			
+			<a href="https:&#x2F;&#x2F;blog.d4s3.xyz/write_ups"><span itemprop="name">[ Write Ups ]</span></a>
+			
+			<a href="https:&#x2F;&#x2F;blog.d4s3.xyz/scratchpad"><span itemprop="name">[ scratchpad ]</span></a>
+			
+		</nav>
+		
+			
+	<h1>PNG Stego</h1>
+	
+	<p> 4 mins </p>
+
+	<span id="continue-reading"></span><h2 id="these-are-some-techniques-i-showed-off-at-a-local-hacker-meetup">These are some techniques I showed off at a local hacker meetup</h2>
+<p>You can find the slides <a href="https://github.com/sudo-d4s3/stego-slides," title="It has more than just PNG stego but PNG stego is the most in depth stego in the slides">here</a></p>
+<h2 id="the-png-file-format-annotated">The PNG File Format Annotated</h2>
+<p><img src="https://blog.d4s3.xyz/write_ups/png-stego-cah/png_file_format.png" alt="" title="Klepped from PoC||GTFO, created by Corkami" /></p>
+<h2 id="chunk-stuffing">Chunk Stuffing</h2>
+<h3 id="chunks-explained">Chunks explained</h3>
+<p>The PNG format is broken into what it calls "chunks". There are three or four chunks that are required for the file to be a valid PNG format. These are called "critical chunks". The three in the annotated hex above are:</p>
+<ul>
+<li><strong>IHDR</strong>: Image Header, this <em>must</em> be the first chunk</li>
+<li><strong>IDAT</strong>: Image Data, This is where the pixels are stored</li>
+<li><strong>IEND</strong>: File Trailer, Tells the parser this is the end of the file, data field must be null</li>
+</ul>
+<p>Earlier I said their are 3 or 4 critical chunks. The fourth critical chunk is contingent on the color byte in the header being 0x03, which is a palette index color type. This chunk would be the palette index itself.</p>
+<p>There are also ancillary chunks that give metadata to tell parsers more specifically how to parse a particular image. There are a ton of ancillary chunks built into the spec. A few we could inject data into are:</p>
+<ul>
+<li>
+<p><strong>gAMA</strong>: Gama chunk, This chunk is supposed to get ignored if there is an sRGB or iCCP chunk. The chunk is supposed to be a 4 byte unsigned integer but since it gets ignored we should be able to inject how much every data we want.</p>
+</li>
+<li>
+<p><strong>cHRM</strong>: Chromaticity chunk, Also ignored if there is an sRGB or iCCP chunk so we should be able to inject whatever we want in this chunk.</p>
+</li>
+<li>
+<p><strong>tEXt</strong>: Text chunk, this chunk has a specific format that has to be followed for it to be a valid chunk. Invalid ancillary chunks are supposed to be ignored but some parsers will throw an error at the user so we should follow it to prevent this.</p>
+<ul>
+<li>Keyword:        1-79 bytes (character string)</li>
+<li>Null separator: 1 byte</li>
+<li>Text:           n bytes (character string)</li>
+</ul>
+<p>There are predefined keywords that we can use. The biggest problem with using these keywords is windows' explorer.exe because it'll be shown in the properties tab.</p>
+<ul>
+<li>Title: Short (one line) title or caption for image</li>
+<li>Author: Name of image's creator</li>
+<li>Description:  Description of image (possibly long)</li>
+<li>Copyright: Copyright notice</li>
+<li>Creation Time: Time of original image creation</li>
+<li>Software: Software used to create the image</li>
+<li>Disclaimer: Legal disclaimer</li>
+<li>Warning: Warning of nature of content</li>
+<li>Source: Device used to create the image</li>
+<li>Comment: Miscellaneous comment; conversion from GIF comment</li>
+</ul>
+</li>
+<li>
+<p><strong>zTXt</strong>: tEXt chunk but compressed</p>
+</li>
+<li>
+<p><strong>iTXt</strong>: tEXt chunk but utf8 encoded</p>
+</li>
+</ul>
+<h3 id="custom-chunks">Custom Chunks</h3>
+<p>The PNG format allows us to create our own chunks. The spec calls them "private chunks". There is a specific format we need to follow with the naming. The letters themself don't matter but the casing does.</p>
+<div class="table">
+<pre>
++-----------+---------------+---------------+--------------+------------------+
+|           | First letter  | Second letter | Third Letter | Fourth Letter    |
++===========+===============+===============+==============+==================+
+| Uppercase | Critical      | Public Chunk  | Reserved     | Not Safe to Copy |
+|           | Chunk         |               |              |                  |
++-----------+---------------+---------------+--------------+------------------+
+| Lowercase | Ancillary     | Private Chunk | N/A          | Safe to Copy     |
+|           | Chunk         |               |              |                  |
++-----------+---------------+---------------+--------------+------------------+
+</pre>
+</div>
+<p>Most of the chunk options I've already talked about. The fourth one is a bit weird since it's for image editors. "Safe to Copy" means that if you edit the image the chunk will get transferred over to the new image. It is telling the editor the data in the chunk isn't dependent on the pixel data.</p>
+<p>The chunk I used as an example was <code>stEg</code>.</p>
+<ul>
+<li><strong>s</strong>: Lowercase -&gt; Ancillary chunk</li>
+<li><strong>t</strong>: Lowercase -&gt; Private chunk</li>
+<li><strong>E</strong>: Uppercase -&gt; Required</li>
+<li><strong>g</strong>: Lowercase -&gt; Safe to Copy</li>
+</ul>
+<h3 id="demo-code">Demo Code</h3>
+<p>You can find my demo code <a href="https://github.com/sudo-d4s3/stego-slides/tree/main/demo_files/chunk_stuffing">here</a>.</p>
+<h2 id="lsb">LSB</h2>
+<p><img src="https://blog.d4s3.xyz/write_ups/png-stego-cah/lsb_bin.png" alt="" title="Stolen from somewhere. I think it was corkami but idk." /></p>
+<p>In the annotated hex above its using color type 0x02 so every pixel is 3 bytes, one for r, g, and b. This means we can have 3 bits per pixel. So if our image is 500x500 we have 250,000 pixels to work with or 750,000 bits (93750 bytes, ~93 kilobytes). So with this method our paylod must be considerably smaller than our png. The colors also won't perceptibly change.</p>
+
+
+	<br />
+	<p>Last Updated: </p>
+	<p>Created: 2023-07-10</p>
+
+		
+		</div>
+	</body>
+</html>

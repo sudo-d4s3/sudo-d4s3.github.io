@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="https://blog.d4s3.xyz/css/main.css" />
+	</head>
+	<body class='hack'>
+		<nav>
+			
+			<a href="https:&#x2F;&#x2F;blog.d4s3.xyz/"><span itemprop="name">[ Home ]</span></a>
+			
+			<a href="https:&#x2F;&#x2F;blog.d4s3.xyz/projects"><span itemprop="name">[ Projects ]</span></a>
+			
+			<a href="https:&#x2F;&#x2F;blog.d4s3.xyz/write_ups"><span itemprop="name">[ Write Ups ]</span></a>
+			
+			<a href="https:&#x2F;&#x2F;blog.d4s3.xyz/scratchpad"><span itemprop="name">[ scratchpad ]</span></a>
+			
+		</nav>
+		
+			
+	<h1>Intro</h1>
+	
+	<h2>Part 0 of the Homelab Project</h2>
+	
+	<p> 7 mins | TODO after article:   everything  </p>
+	
+	<div class="toc" style="border:white; border-style:dashed; padding:1em; margin-bottom:1em;">
+		<h3>TOC:</h3>
+		<ul>
+			
+			
+			
+			
+			
+			<li><a class="bd-toc-link" href="https:&#x2F;&#x2F;blog.d4s3.xyz&#x2F;projects&#x2F;homelab&#x2F;intro&#x2F;">Intro</a> <- You are Here</li>
+				<ul>
+					
+					<li><a href="https:&#x2F;&#x2F;blog.d4s3.xyz&#x2F;projects&#x2F;homelab&#x2F;intro&#x2F;#an-ambitious-lab">An ambitious lab</a></li>
+					
+					
+					<li><a href="https:&#x2F;&#x2F;blog.d4s3.xyz&#x2F;projects&#x2F;homelab&#x2F;intro&#x2F;#defining-this-project">Defining this Project</a></li>
+					
+					
+					<li><a href="https:&#x2F;&#x2F;blog.d4s3.xyz&#x2F;projects&#x2F;homelab&#x2F;intro&#x2F;#new-lab">New Lab</a></li>
+					
+					
+					<li><a href="https:&#x2F;&#x2F;blog.d4s3.xyz&#x2F;projects&#x2F;homelab&#x2F;intro&#x2F;#some-improvements-over-the-old-lab">Some improvements over the old lab.</a></li>
+					
+					
+					<li><a href="https:&#x2F;&#x2F;blog.d4s3.xyz&#x2F;projects&#x2F;homelab&#x2F;intro&#x2F;#general-notes-for-scoping">General Notes for Scoping</a></li>
+					
+						<ul>
+						
+							<li><a href="https:&#x2F;&#x2F;blog.d4s3.xyz&#x2F;projects&#x2F;homelab&#x2F;intro&#x2F;#security-setup">Security setup</a></li>
+						
+							<li><a href="https:&#x2F;&#x2F;blog.d4s3.xyz&#x2F;projects&#x2F;homelab&#x2F;intro&#x2F;#sub-labs">Sub-labs</a></li>
+						
+							<li><a href="https:&#x2F;&#x2F;blog.d4s3.xyz&#x2F;projects&#x2F;homelab&#x2F;intro&#x2F;#media-servers">Media Servers</a></li>
+						
+						</ul>
+					
+					
+				</ul>
+			
+			
+			
+			
+			
+			<li><a class="bd-toc-link" href="https:&#x2F;&#x2F;blog.d4s3.xyz&#x2F;projects&#x2F;homelab&#x2F;skel&#x2F;">Building the Skeleton</a></li>
+			
+			
+			
+			
+			
+			<li><a class="bd-toc-link" href="https:&#x2F;&#x2F;blog.d4s3.xyz&#x2F;projects&#x2F;homelab&#x2F;federation&#x2F;">Setting up a Realm</a></li>
+			
+			
+			
+		</ul>
+	</div>
+	<span id="continue-reading"></span><h2 id="defining-this-project">Defining this Project</h2>
+<p>As of writing, this is not intended to be a walkthrough on how to setup your lab 1:1 to mine. This is just a project log and notes for myself and I hope others can benefit from my writings when setting up their lab. So I won't be going over every detail just the basic steps I'm taking, notes on why I'm taking those steps, ideas for how to improve, or alternative things I or you could try, and any issues I run into. These notes assume you have a working knowledge of the linux cli, basic networking, and basic security concepts.</p>
+<p>I do want feedback on my writing since it's a skill I'm trying to develop. However if you have feedback on the lab implementation I'd love to hear it. I'm also open to questions but I can't create your lab for you.</p>
+<h2 id="new-lab">New Lab</h2>
+<p>I moved apartments and decided to rebuild my lab from scratch. A limitation of this new ISP is my WAN connection is now asymmetric (1000/100) but unlike my last ISP they allow me to use my own hardware without circumventing their hardware. I haven't stress tested it yet but I'm curious to see how this affects my VPN.</p>
+<p>Some of the goals for this new lab are:</p>
+<ul>
+<li>Usable Media Servers
+<ul>
+<li>Videos</li>
+<li>Music</li>
+<li>EBooks</li>
+<li>Games</li>
+<li>Notes</li>
+<li>NAS (for everything else)</li>
+</ul>
+</li>
+<li>Enterprise Infra
+<ul>
+<li>User federation</li>
+<li>SSO</li>
+<li>Secret Store for Infra</li>
+<li>Secret Store for Users</li>
+<li>Mesh VPN</li>
+<li>VDI</li>
+</ul>
+</li>
+<li>Security Infra
+<ul>
+<li>802.1x</li>
+<li>Vuln management</li>
+<li>SIEM/XDR</li>
+<li>Proper Network Segmenting</li>
+</ul>
+</li>
+<li>Wireless
+<ul>
+<li>Host Isolation</li>
+<li>EAP</li>
+</ul>
+</li>
+<li>Sec Lab
+<ul>
+<li>Red Team</li>
+<li>Malware Analytics</li>
+</ul>
+</li>
+</ul>
+<h2 id="some-improvements-over-the-old-lab">Some improvements over the old lab.</h2>
+<p>The old lab was patchwork that was getting hard to maintain. I started getting user federation working but moved before it was completed. The enterprise infra section I'm really excited about because setting up that infra first will make everything else much easier to maintain. I had a redteam lab up and running and used it extensively so I'll probably just replicate it in the new lab. My job is as a PurpleTeamer so I've been looking to setup a blue-ish team lab and as of writing I've decided to scope it down to just malware analytics. This allows me to analyze malware samples that I find in a controlled environment and automates some of the basic tasks.</p>
+<p>Wireless has always been a weakpoint in my lab. I've wanted an EAP setup for a while and the last time I attempted it the only hardware I had that had that capability was a pi4 using <a href="https://raspap.com/">RaspAP</a>. The software works pretty well however I don't know if I can recommend it. In my setup it was really flaky and I had to reboot the ap many times a day. I don't know if it was a software or hardware issue. I ended up reverting back to a standard locked-down consumer combo-box I had laying around. I have better hardware now so it should be doable.</p>
+<h1 id="general-notes-for-scoping">General Notes for Scoping</h1>
+<h2 id="security-setup">Security setup</h2>
+<p>The user connection flow I envision for the network is as follows. Theoretically only my desktop is connected via ethernet, it's on it's own vlan that I'll treat as basically a management vlan. Most other devices will connect via wifi. When they connect they get scanned for any vulnerable services running on open ports. If the scanner finds something a captive portal will come up and tell them they have been isolated from the rest of the network and will not be let back on until they fix the vulnerability. They will have a connection to the internet so they can update if needed. Otherwise they will need to authenticate using a cert. If they can they are let onto the "secure" network. Otherwise they are isolated from the rest of the network with only a connection to the greater internet. The secure network will get scanned nightly and anything running a vulnerable service will get isolated.</p>
+<p>All of my devices (workstations, servers, and appliances) will have an <a href="https://www.elastic.co/">Elastic</a> agent running and collecting logs. The ELK stack is opensource once again, being triple licensed with AGPL-3.0, SSPLv1, and the Elastic License 2.0. I will be using the <a href="https://www.elastic.co/guide/en/integrations/current/endpoint.html">Elastic Defend</a> integration which unfortunately is <strong>not</strong> opensource being licensed under the Elastic License 2.0. From my testing Elastic Defend was able to catch more malicious activity than <a href="https://wazuh.com/">Wazuh</a> even catching some of my custom malware. I would love to see Wazuh improve so I don't have to run more proprietary code than absolutely necessary. I will say Wazuh does have some really nice features that Elastic doesn't have such as <a href="https://documentation.wazuh.com/current/user-manual/capabilities/sec-config-assessment/index.html">endpoint config assessments</a>. This is something that I'm still looking into for my network. Wazuh is heavy for just endpoint config assessments. I'm looking into <a href="https://github.com/OpenSCAP/openscap/">OpenSCAP</a> for endpoint conifg assessments. It uses STIGs which are pretty good on their own and the format is XML so it's not <em>too</em> difficult to write your own. It's funded by Red Hat and while not my favorite license it is opensource using LGPL-2.1.</p>
+<h2 id="sub-labs">Sub-labs</h2>
+<h3 id="red-team">Red Team</h3>
+<p>The RedTeam lab will pretty much just be <a href="https://github.com/Orange-Cyberdefense/GOAD">GOAD</a>. I can't overstate how good of a lab this is. If you're looking into a redteam lab it can be setup with just virutalbox and vagrant. It has a few different configurations:</p>
+<ul>
+<li>Full: (5 vms, 2 forests, 3 domains)</li>
+<li>Light: (3 vms, 1 forest, 2 domains)</li>
+<li>Mini: (2 vms, 1 forest, 1 domain)</li>
+<li>SCCM: (4 vms, 1 forest, 1 domain, with microsoft configuration manager installed)</li>
+<li>Ninja Hacker Academy: (5 vms and 2 domains, with no documentation and minimal vulns)</li>
+</ul>
+<p>I'll be setting it up in proxmox with either the full or SCCM config. The last time I setup GOAD it didn't have the SCCM config. That config is closer to most of the environments I've been in so I might use it instead of Full. I'll be adding a <a href="https://github.com/outflanknl/RedELK">RedELK</a> instance, <a href="https://github.com/its-a-feature/Mythic">MythicC2</a>, and an attack box.</p>
+<h3 id="malware-analytics">Malware Analytics</h3>
+<p>I do my malware analysis by hand so I'm not really sure what a good lab would look like. I found an <a href="https://www.archcloudlabs.com/projects/malware-analysis-pieline-1/">article</a> that actually prompted this idea. They use <a href="https://www.github.com/radareorg/radare2">radare</a> for inital analysis and then pipe the output into an ELK stack. I know of radare and it's been recommended to me by my peers but I've never used it. I use <a href="https://panda.re">PANDA.re</a> for reverse engineering tasks and while not it's main purpose it can be used for malware analysis. There are also projects such as <a href="https://github.com/kevoreilly/CAPEv2">CAPEv2</a>, <a href="https://github.com/cert-ee/cuckoo3">Cuckoo3</a>, and <a href="https://github.com/CERT-Polska/drakvuf-sandbox/">DRAKVUF Sandbox</a> that could be what I'm looking for but I'll need to do a deeper dive. I could also contruct something like a terraform+ansible+packer chain that would deploy a vm loaded with tools to do manual analysis.</p>
+<h2 id="media-servers">Media Servers</h2>
+<p>I have a pretty good collection of media that I share with friends and family so having SSO and user federation setup would be amazing. I'm still debating on using a reverse proxy vs. a vpn. Previously I required people to setup zerotier on their machine to get to my media servers. This became a little annoying having to setup the agent on all of their devices but it give me piece-of-mind not having those servers exposed to the internet. Something like <a href="https://goauthentik.io/">Authentik</a> could work here since not only does it do SSO it also has a dashboard full of the apps the user has access to.</p>
+<p>I also need a better way of taking notes. My current solution is writing text documents in whatever folder I'm working out of which is really good for quickly taking detailed notes but terrible for retrieval. I've been looking into wiki systems on-and-off and my coworker showed me <a href="https://www.bookstackapp.com/">Bookstack</a> which seems like it fits all of my requirements.</p>
+
+
+	<br />
+	<p>Last Updated: </p>
+	<p>Created: 2025-01-05</p>
+
+		
+		</div>
+	</body>
+</html>

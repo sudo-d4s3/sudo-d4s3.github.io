@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="https://blog.d4s3.xyz/css/main.css" />
+	</head>
+	<body class='hack'>
+		<nav>
+			
+			<a href="https:&#x2F;&#x2F;blog.d4s3.xyz/"><span itemprop="name">[ Home ]</span></a>
+			
+			<a href="https:&#x2F;&#x2F;blog.d4s3.xyz/projects"><span itemprop="name">[ Projects ]</span></a>
+			
+			<a href="https:&#x2F;&#x2F;blog.d4s3.xyz/write_ups"><span itemprop="name">[ Write Ups ]</span></a>
+			
+			<a href="https:&#x2F;&#x2F;blog.d4s3.xyz/scratchpad"><span itemprop="name">[ scratchpad ]</span></a>
+			
+		</nav>
+		
+			
+	<h1>Building the Skeleton</h1>
+	
+	<h2>Part 1 of the Homelab Project</h2>
+	
+	<p> 5 mins | TODO after article:   Network ACLs,    Realm,    Lockdown wAP Controller  </p>
+	
+	<div class="toc" style="border:white; border-style:dashed; padding:1em; margin-bottom:1em;">
+		<h3>TOC:</h3>
+		<ul>
+			
+			
+			
+			
+			
+			<li><a class="bd-toc-link" href="https:&#x2F;&#x2F;blog.d4s3.xyz&#x2F;projects&#x2F;homelab&#x2F;intro&#x2F;">Intro</a></li>
+			
+			
+			
+			
+			
+			<li><a class="bd-toc-link" href="https:&#x2F;&#x2F;blog.d4s3.xyz&#x2F;projects&#x2F;homelab&#x2F;skel&#x2F;">Building the Skeleton</a> <- You are Here</li>
+				<ul>
+					
+					<li><a href="https:&#x2F;&#x2F;blog.d4s3.xyz&#x2F;projects&#x2F;homelab&#x2F;skel&#x2F;#part-1">Part 1</a></li>
+					
+					
+					<li><a href="https:&#x2F;&#x2F;blog.d4s3.xyz&#x2F;projects&#x2F;homelab&#x2F;skel&#x2F;#evaluation">Evaluation</a></li>
+					
+					
+					<li><a href="https:&#x2F;&#x2F;blog.d4s3.xyz&#x2F;projects&#x2F;homelab&#x2F;skel&#x2F;#skeletal-build">Skeletal Build</a></li>
+					
+						<ul>
+						
+							<li><a href="https:&#x2F;&#x2F;blog.d4s3.xyz&#x2F;projects&#x2F;homelab&#x2F;skel&#x2F;#opnsense">OPNsense</a></li>
+						
+							<li><a href="https:&#x2F;&#x2F;blog.d4s3.xyz&#x2F;projects&#x2F;homelab&#x2F;skel&#x2F;#proxmox">Proxmox</a></li>
+						
+							<li><a href="https:&#x2F;&#x2F;blog.d4s3.xyz&#x2F;projects&#x2F;homelab&#x2F;skel&#x2F;#unifi-controller">Unifi Controller</a></li>
+						
+						</ul>
+					
+					
+					<li><a href="https:&#x2F;&#x2F;blog.d4s3.xyz&#x2F;projects&#x2F;homelab&#x2F;skel&#x2F;#next-steps">Next Steps</a></li>
+					
+					
+					<li><a href="https:&#x2F;&#x2F;blog.d4s3.xyz&#x2F;projects&#x2F;homelab&#x2F;skel&#x2F;#appendix-1-current-network-diagram">Appendix 1 (Current Network Diagram)</a></li>
+					
+					
+				</ul>
+			
+			
+			
+			
+			
+			<li><a class="bd-toc-link" href="https:&#x2F;&#x2F;blog.d4s3.xyz&#x2F;projects&#x2F;homelab&#x2F;federation&#x2F;">Setting up a Realm</a></li>
+			
+			
+			
+		</ul>
+	</div>
+	<span id="continue-reading"></span><h2 id="evaluation">Evaluation</h2>
+<p>I have collected a few different hardware components over the years that gives me a pretty wide range for my lab.</p>
+<p>For servers I have:</p>
+<ul>
+<li>3 ThinkCentres: two with an Intel i5-6500T, one with a Ryzen 5 PRO 2400GE both with 8gb of ram.</li>
+<li>a Minisforum MS-A1 which has a Ryzen 7 8700G with 32gb of ram.</li>
+<li>Poweredge T330</li>
+</ul>
+<p>For networking equipment I have:</p>
+<ul>
+<li>Fujitsu Futro S920 thinclient running OPNsense</li>
+<li>Dell Optiplex 7020 running OPNsense</li>
+<li>microtik 5 port managed gigabit switch</li>
+<li>2 generic 8 port unmanaged gigabit switchs</li>
+<li>Ubiquity U6 Enterprise wAP</li>
+<li>a shit-ton of ethernet cables. like an ungodly amount. its everywhere. send help.</li>
+</ul>
+<h2 id="skeletal-build">Skeletal Build</h2>
+<p>I need a usable network before I do anything else for the sanity of myself, visitors, and everyone else that uses the network and puts up with my shenanigans. (Love you guys!) This means I'm temporarily sacrificing security for speed. Which is fine for the most part since I won't have any servers running just yet.</p>
+<p>I'm using the optiplex for my firewall/router. It's an upgrade from the fujitsu thinclient so I'll have more storage and compute to run things like Suricata.</p>
+<h3 id="opnsense">OPNsense</h3>
+<p>I'll be using OPNsense as my firewall. There's not a particular reason I'm using it over any other opensource firewall it just does what I need and it's what I'm familiar with.</p>
+<p>After initial setup I created a few vlans:</p>
+<ul>
+<li>WIFI (10.2.0.0/24)</li>
+<li>Servers (10.3.0.0/24)</li>
+<li>Workstations (10.4.0.0/24)</li>
+</ul>
+<p>These will be expanded later but they work for now.</p>
+<p>I setup an any/any rule for each vlan that allows them to connect to anything on the network. This is temporary and should be considered a vulnerability.</p>
+<p>The next thing to do is setup vlan tagging on the managed switch. I'm not a networking person so this could be a me issue but I don't find Microtik's vlan tagging definitions intuitive. For a simple setup you setup the ingress ports to strip any tags and apply their own tag based on which port the traffic is coming from and then you setup a trunk port for egress. To allow more vlans to be created and used from the servers and wAP you have to setup what Microtik's calls hybrid ports. Apparently Cisco calls these something else since a networking guy I was talking to didn't know what I was talking about. To do this I originally setup the port to leave the tag as is and apply a tag if the traffic is untagged. This straight up didn't work. I ended up having to set the port to do nothing if the traffic tagged and it would apply the default tag to untagged traffic. These two options sound very similar but they're separate options in the switch management page.</p>
+<p>After I figured that out the traffic was flowing correctly. DHCP gave me an IP, DNS was working, and I could reach the internet.</p>
+<h3 id="proxmox">Proxmox</h3>
+<p>Now that I have a networking backbone I need to setup wireless for everyone who's not me on the network. (I try to get people to use ethernet and have been unsuccessful so far.) To do this I need a wireless controller for the U6e wAP. Putting the unify server in a vm is kinda annoying because it's using a really old version of mongo and libssl. In the future we'll need to setup mitigating controls on this box because of this. But first I need to setup my proxmox cluster.</p>
+<p>This is straight forward to do. Boot the iso, run through the installer, set static IPs. Wait ... set static IPs? Yeah this is a pain point for me I would prefer to have DHCP running for the hypervisors and just set a reservation it makes management alot easier. It can be done post-install but for now I'm going to leave it. I have my DHCP scope for the server vlan starting at .10 so I set the hypervisors to be .2, .3, .4, and .5. The NAS will be .6. After that I have the main node, the minisforum, create a cluster and have the other nodes join the cluster. I then remove the enterprise repo from all the nodes and add the community repo and update all the nodes.</p>
+<h3 id="unifi-controller">Unifi Controller</h3>
+<p>Now that I have hypervisors are setup I can actually get WIFI working. I created a Debian 12 vm, updated it, then installed neovim and sudo. I then added the unifi, mongo, and bullseye-security repos for unifi, mongodb-org-server, and libssl1.1 respectively.</p>
+<p>I then reboot the vm, navigated to localhost:8443, and ran through the setup process. I then reset the wAP to factory defaults and took waaaaay too long to realize the controller couldn't see the ap because they had two different broadcasts. You can ssh into the ap using ui/ui creds and run <code>set-inform http://&lt;controller-ip&gt;:8080/inform</code> to manually send the adoption request.
+I was then able to adopt the ap without issue. I then setup a basic wireless network.</p>
+<h2 id="next-steps">Next Steps</h2>
+<p>Now that I have a network that works I can start working on actual lab things.</p>
+<p>These are the next things I need to work on: (order not solidified)</p>
+<ul>
+<li>Getting a realm setup</li>
+<li>Network ACLs</li>
+</ul>
+<h1 id="appendix-1-current-network-diagram">Appendix 1 (Current Network Diagram)</h1>
+<p><object data="pics/skel_infra.svg" type="image/svg+xml" style="width:100%;"></object></p>
+
+
+	<br />
+	<p>Last Updated: </p>
+	<p>Created: 2025-01-06</p>
+
+		
+		</div>
+	</body>
+</html>

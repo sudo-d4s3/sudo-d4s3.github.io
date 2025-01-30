@@ -19,17 +19,22 @@
 			
 		</nav>
 		
-		<div class="table">
 			
-	<aside><h2>Home</h2></aside>
+	<h1></h1>
+	
+	<p> 1 mins </p>
 
-			<main>
-				
-	<h1>D4S3</h1>
-	<h3>My Webspace</h3>
-	<p>Space for my ramblings.</p>
+	<span id="continue-reading"></span><h1 id="netcat-webserver">Netcat Webserver</h1>
+<p><code>while true; do echo -e "HTTP/1.1 200 OK\n\n" $(cat index.html) | nc -lp 8080 -q 1; done</code></p>
+<ul>
+<li><em>"HTTP/1.1 200 OK\n\n"</em> can be put in the html file. Just be sure to use <code>^M^M</code> instead of the literal <code>\n\n</code></li>
+</ul>
 
-			</main>
+
+	<br />
+	<p>Last Updated: </p>
+	<p>Created: </p>
+
 		
 		</div>
 	</body>
