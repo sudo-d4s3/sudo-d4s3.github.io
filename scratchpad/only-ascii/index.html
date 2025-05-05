@@ -16,19 +16,19 @@
 			
 		</nav>
 		
-		<div class='table'>
-			<aside>
-				<h2>Home</h2>
-			</aside>
-			<main>
-				
-  <h1 id="d4s3">D4S3</h1>
-<h3 id="my-webspace">My Webspace</h3>
-<p>Space for my ramblings.</p>
+		
+  <h1>Strip everything except ascii from Text files</h1>
+  <p>1 mins</p>
+  
+  <span id="continue-reading"></span>
+<p>A really quick way of doing this is to use <code>strings</code>. However this will strip whitespace characters.</p>
+<p>If you need whitespace characters intact you can use this:</p>
+<p><code>cat &lt;file&gt; | tr -d "[:cntrl:]" | iconv -c -f utf-8 -t ascii -</code></p>
 
+  <br>
+  <p>Updated: </p>
+  <p>Created: </p>
 	
-			</main>
-		</div>
 		
 	</body>
 </html>

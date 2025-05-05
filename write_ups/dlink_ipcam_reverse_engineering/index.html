@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title></title>
+		<link href="/css/main.css" rel="stylesheet">
+	</head>
+	<body class='hack'>
+		<nav>
+			
+			<a href="/"><span itemprop="name">[ Home ]</span></a>
+			<a href="/projects"><span itemprop="name">[ Projects ]</span></a>
+			<a href="/write_ups"><span itemprop="name">[ Write Ups ]</span></a>
+			<a href="/scratchpad"><span itemprop="name">[ scratchpad ]</span></a>
+			
+		</nav>
+		
+		
+	
+		<h1>Reverse Engineering A D-link Security Cam</h1>
+		<p>6 mins</p>
+		<span id="continue-reading"></span><h2 id="a-d-link-security-cam">A D-link Security Cam</h2>
+<h3 id="preface">Preface</h3>
+<p>I'm using the firmware for the <a href="https://eu.dlink.com/uk/en/products/dcs-7410-securicam-day-and-night-outdoor-network-camera">dcs-7410</a>.</p>
+<p>I chose this firmware because I was told by a friend there is a vulnerability that someone with little experience could find and exploit.</p>
+<p>This is the first time I've attempted firmware reverse engineering.</p>
+<p>You will see me do some weird things like not using <code>cd</code>, it's so the terminal looks better for pictures.</p>
+<h3 id="starting">Starting</h3>
+<p>After I upzipped it I used <code>binwalk</code></p>
+<p><img src="/write_ups/dlink_ipcam_reverse_engineering/reverse_engineer1.png" alt="" /></p>
+<p>From this you can see a cramfs filesystem. Cramfs is a compressed rom file, which makes sense because you aren't supposed to be able to write to your firmware and it has a pretty good compression ratio.</p>
+<p><img src="/write_ups/dlink_ipcam_reverse_engineering/reverse_engineer2.png" alt="" /></p>
+<p>I could've extracted this with <code>dd</code> but <code>binwalk</code> has a flag <code>-e</code> that tries to extract the files in the firmware. I got a few warnings but they don't seem to have actually affected me. Now that I extracted the filesystem I need to mount it in the cramfs-root folder.</p>
+<h3 id="gettinga-lay-of-the-land">Gettinga lay of the land</h3>
+<p><img src="/write_ups/dlink_ipcam_reverse_engineering/reverse_engineer3.png" alt="" /></p>
+<p>After I mounted the image I need to find the web server and it's config files. Now most web servers are pretty bloated but there are a few that are light enough to be used in embedded systems such as,</p>
+<ul>
+<li>lighttpd</li>
+<li>busybox http server (httpd)</li>
+<li>Tiny/Turbo/Throttling HTTP server (thttpd)</li>
+</ul>
+<p>Now I've personally seen more lighttpd in my hobby development boards and SOCs, however we can clearly see that busybox is on this system so we should probably look for httpd first.</p>
+<p>Normally you could just do a banner grab on the website to get the server but as I don't have the ip cam physically I would need to emulate the cam which I wont do that now but I will later.</p>
+<p><img src="/write_ups/dlink_ipcam_reverse_engineering/reverse_engineer4.png" alt="" /></p>
+<p>I'm using <code>find</code> instead of <code>ls -R</code> because find will give you the directory the <code>file</code> is in and I'm using <code>grep</code> instead of <code>find -name</code> because <code>find -name</code> is very literal and <code>grep</code> will just match the string.</p>
+<p>Now the results are interesting because I found lighttpd instead of httpd even when busybox is used on the camera. This is great for me because I've used lighttpd a lot more than httpd or thttpd.</p>
+<p>There is nothing interesting in lighttpd.conf but it does <code>include</code> lighttpd-inc.conf</p>
+<p><img src="/write_ups/dlink_ipcam_reverse_engineering/reverse_engineer5.png" alt="" /></p>
+<p>Now when I do a <code>file</code> on lighttpd-inc.conf it says that its a symlink connected to /tmp/lighttpd-inc.conf, I did a <code>ls</code> on it to make it easier to read. However when you <code>ls</code> in the /tmp/ folder there is nothing there.</p>
+<p>Now if we go back to the images we can see a swap file, however when I <code>file</code> it says its a filesystem now if I try to mount the image it throws an error. If I take a longer look I can see the filesystem is in big endian, the filesystem on my computer is little endian so that's the issue.</p>
+<p><img src="/write_ups/dlink_ipcam_reverse_engineering/reverse_engineer6.png" alt="" /></p>
+<p>Typically at this point I'd build a python script that would reverse the endianess however, <del>thankfully</del> there is already a tool out there specifically for the cramfs filesystem.</p>
+<p>But that /tmp/ is also empty</p>
+<h3 id="reevaluating-the-situation">Reevaluating the situation</h3>
+<p>So clearly I've missed something. I'm going to go back to the original image and go through more of the lighttpd files.</p>
+<p><img src="/write_ups/dlink_ipcam_reverse_engineering/reverse_engineer4.png" alt="" /></p>
+<p>So lets take a look at /etc/rc.d/init.d/lighttpd.sh</p>
+<p><img src="/write_ups/dlink_ipcam_reverse_engineering/reverse_engineer7.1.png" alt="" /></p>
+<p>So here we can see what seem to be admin pages.</p>
+<p><img src="/write_ups/dlink_ipcam_reverse_engineering/reverse_engineer7.2.png" alt="" /></p>
+<p>Here we can see the directories that require a login. Now we have to remember these aren't file directories these are web directories.</p>
+<p>So /cgi/ wouldnt be in the root filesystem directory it would be in the root webserver directory. Now the root websever directory is usually /www however on this machine its in /var/www</p>
+<p><img src="/write_ups/dlink_ipcam_reverse_engineering/reverse_engineer8.png" alt="" /></p>
+<p>So if we cross reference this <code>ls</code> with the protected directories we can see the following directories:</p>
+<ul>
+<li>/image/</li>
+<li>/video/</li>
+<li>/audio/</li>
+<li>/dev/</li>
+<li>/cht/</li>
+<li>/eng/</li>
+<li>/cgi/</li>
+<li>/users/</li>
+</ul>
+<p>This leaves the following directories unprotected:</p>
+<ul>
+<li>/b/</li>
+<li>/cgi-bin/</li>
+<li>/common/</li>
+<li>/error/</li>
+<li>/i/</li>
+<li>/m/</li>
+<li>/md/</li>
+<li>/xsl/</li>
+</ul>
+<p>Now the most interesting directory in the unprotected list is /cgi-bin/</p>
+<p><img src="/write_ups/dlink_ipcam_reverse_engineering/reverse_engineer9.png" alt="" /></p>
+<p>There is a single file in here and thankfully its not compiled so I don't have to decompile a binary.</p>
+<p><img src="/write_ups/dlink_ipcam_reverse_engineering/reverse_engineer10.png" alt="" /></p>
+<p>And there it is...</p>
+<p>Let me break this down.</p>
+<p>So if you look at the last line there is an <code>eval</code> which takes a string and puts it into a shell. Inside that <code>eval</code> they <code>echo</code> the query string. This query string is then piped into a <code>sed</code> command. <code>sed -e 's/&amp;/ /g'</code> will substitute ampersands with spaces.</p>
+<p>So to put it all together whatever you put into the query string, as long as you use amps instead of spaces, will be run in a terminal.</p>
+<h3 id="demo">Demo</h3>
+<p>So first I need to emulate the ip cam. But I'm just going to emulate the shell environment because I was having issues emulating the entire image.</p>
+<p>Now I can't find what CPU, or SOC more likely, this camera runs on but I'm going to make an educated guess and say whatever it is its based on the ARM architecture. (I looked at the opcodes)</p>
+<p><img src="/write_ups/dlink_ipcam_reverse_engineering/reverse_engineer11.png" alt="" /></p>
+<p>Cramfs is a read-only file system so I made a new directory and copied everything from cramfs-root to cramfs-write.</p>
+<p>Then I copied over a qemu arm user environment. I then ran <code>chroot</code> as the qemu arm user and ran <code>busybox</code>.</p>
+<p>Now what I can do is jump into the shell. Also as a side note this version of busybox was outdated when this camera came out.</p>
+<p><img src="/write_ups/dlink_ipcam_reverse_engineering/reverse_engineer12.png" alt="" /></p>
+<p>I am getting some funky behavior, probably because I'm not emulating the whole device.</p>
+<p><img src="/write_ups/dlink_ipcam_reverse_engineering/reverse_engineer13.png" alt="" /></p>
+<p>Here I navigated to the injectable file and did an <code>ls /</code></p>
+<p><img src="/write_ups/dlink_ipcam_reverse_engineering/reverse_engineer14.png" alt="" /></p>
+<p>It will return the output to the browser.</p>
+<h3 id="synopsis">Synopsis</h3>
+<p>So this was the first time I've reverse engineered firmware. I intentionally went with old firmware and D-link because I wanted something easy to start with and old firmware is bound to have vulnerabilities and D-link doesn't have a very good reputation when it comes to security.</p>
+<p>I was not expecting the command injection to be that easy. I have also never seen command injection like that outside of CTFs or other labs.</p>
+<p>Some things I had difficulty with had mostly to do with the emulation part, I was having issues with qemu so I decided that instead of emulating the whole device it would be easier and quicker to just <code>chroot</code> ash and run lighttpd from there since all I needed was to prove that the command injection would work.</p>
+
+		<br>
+		<p>Updated: </p>
+		<p>Created: 2020-03-13</p>
+	
+	
+		
+	</body>
+</html>

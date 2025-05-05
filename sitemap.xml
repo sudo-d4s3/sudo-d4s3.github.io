@@ -7,57 +7,42 @@
         <loc>https://blog.d4s3.xyz/projects/</loc>
     </url>
     <url>
-        <loc>https://blog.d4s3.xyz/projects/contrarianos/</loc>
+        <loc>https://blog.d4s3.xyz/projects/FriendlyOS/</loc>
     </url>
     <url>
-        <loc>https://blog.d4s3.xyz/projects/contrarianos/init/</loc>
+        <loc>https://blog.d4s3.xyz/projects/FriendlyOS/init/</loc>
         <lastmod>2023-07-03</lastmod>
     </url>
     <url>
-        <loc>https://blog.d4s3.xyz/projects/d4s3/</loc>
+        <loc>https://blog.d4s3.xyz/projects/contrarianOS/</loc>
     </url>
     <url>
-        <loc>https://blog.d4s3.xyz/projects/d4s3/v5/</loc>
+        <loc>https://blog.d4s3.xyz/projects/contrarianOS/init/</loc>
+        <lastmod>2023-07-03</lastmod>
+    </url>
+    <url>
+        <loc>https://blog.d4s3.xyz/projects/website/</loc>
+    </url>
+    <url>
+        <loc>https://blog.d4s3.xyz/projects/website/v5/</loc>
         <lastmod>2023-06-11</lastmod>
     </url>
     <url>
-        <loc>https://blog.d4s3.xyz/projects/d4s3/v6/</loc>
+        <loc>https://blog.d4s3.xyz/projects/website/v6/</loc>
         <lastmod>2025-01-05</lastmod>
     </url>
     <url>
-        <loc>https://blog.d4s3.xyz/projects/friendlyos/</loc>
-    </url>
-    <url>
-        <loc>https://blog.d4s3.xyz/projects/friendlyos/init/</loc>
-        <lastmod>2023-07-03</lastmod>
-    </url>
-    <url>
-        <loc>https://blog.d4s3.xyz/projects/homelab/</loc>
-    </url>
-    <url>
-        <loc>https://blog.d4s3.xyz/projects/homelab/archived/</loc>
-        <lastmod>2024-03-10</lastmod>
-    </url>
-    <url>
-        <loc>https://blog.d4s3.xyz/projects/homelab/federation/</loc>
-        <lastmod>2025-01-08</lastmod>
-    </url>
-    <url>
-        <loc>https://blog.d4s3.xyz/projects/homelab/intro/</loc>
-        <lastmod>2025-01-05</lastmod>
-    </url>
-    <url>
-        <loc>https://blog.d4s3.xyz/projects/homelab/skel/</loc>
-        <lastmod>2025-01-06</lastmod>
+        <loc>https://blog.d4s3.xyz/projects/website/v7/</loc>
+        <lastmod>2025-05-04</lastmod>
     </url>
     <url>
         <loc>https://blog.d4s3.xyz/scratchpad/</loc>
     </url>
     <url>
-        <loc>https://blog.d4s3.xyz/scratchpad/ascii-strip/</loc>
+        <loc>https://blog.d4s3.xyz/scratchpad/nc-webserver/</loc>
     </url>
     <url>
-        <loc>https://blog.d4s3.xyz/scratchpad/nc-web/</loc>
+        <loc>https://blog.d4s3.xyz/scratchpad/only-ascii/</loc>
     </url>
     <url>
         <loc>https://blog.d4s3.xyz/scratchpad/python-oneliners/</loc>
@@ -70,22 +55,37 @@
     </url>
     <url>
         <loc>https://blog.d4s3.xyz/write_ups/defcon32/</loc>
+    </url>
+    <url>
+        <loc>https://blog.d4s3.xyz/write_ups/defcon32/init/</loc>
         <lastmod>2024-08-18</lastmod>
     </url>
     <url>
-        <loc>https://blog.d4s3.xyz/write_ups/dlink-ipcam-reverse-engineering/</loc>
+        <loc>https://blog.d4s3.xyz/write_ups/dlink_ipcam_reverse_engineering/</loc>
+    </url>
+    <url>
+        <loc>https://blog.d4s3.xyz/write_ups/dlink_ipcam_reverse_engineering/init/</loc>
         <lastmod>2020-03-13</lastmod>
     </url>
     <url>
-        <loc>https://blog.d4s3.xyz/write_ups/jolt-2023/</loc>
+        <loc>https://blog.d4s3.xyz/write_ups/jolt_2023/</loc>
+    </url>
+    <url>
+        <loc>https://blog.d4s3.xyz/write_ups/jolt_2023/init/</loc>
         <lastmod>2023-10-15</lastmod>
     </url>
     <url>
-        <loc>https://blog.d4s3.xyz/write_ups/png-stego-cah/</loc>
+        <loc>https://blog.d4s3.xyz/write_ups/png_stego_cah/</loc>
+    </url>
+    <url>
+        <loc>https://blog.d4s3.xyz/write_ups/png_stego_cah/init/</loc>
         <lastmod>2023-07-10</lastmod>
     </url>
     <url>
-        <loc>https://blog.d4s3.xyz/write_ups/rsa-crypto/</loc>
+        <loc>https://blog.d4s3.xyz/write_ups/rsa_crypto/</loc>
+    </url>
+    <url>
+        <loc>https://blog.d4s3.xyz/write_ups/rsa_crypto/init/</loc>
         <lastmod>2023-07-14</lastmod>
     </url>
 </urlset>

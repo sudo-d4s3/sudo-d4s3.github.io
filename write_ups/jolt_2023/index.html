@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title></title>
+		<link href="/css/main.css" rel="stylesheet">
+	</head>
+	<body class='hack'>
+		<nav>
+			
+			<a href="/"><span itemprop="name">[ Home ]</span></a>
+			<a href="/projects"><span itemprop="name">[ Projects ]</span></a>
+			<a href="/write_ups"><span itemprop="name">[ Write Ups ]</span></a>
+			<a href="/scratchpad"><span itemprop="name">[ scratchpad ]</span></a>
+			
+		</nav>
+		
+		
+	
+		<h1>Notes On: Jolt 2023</h1>
+		<p>11 mins</p>
+		<span id="continue-reading"></span><h2 id="what-is-jolt">What is Jolt?</h2>
+<p>Jolt is a CTF in Little Rock Arkansas. This year my team, the r00tLeggers, got third place. Jolt is put on by Central Arkansas Hackers in conjunction with The Venture Center.</p>
+<p>I'm a big fan of Jolt because it's not a super uber serious competition you are encouraged to collaborate and seek help from other teams. One example is I had a lot of people ask how I solved a challenge involving a corupted and encrypted zipfile.</p>
+<p>The zipfile had a .nfo file and a spanned zipfile using the magic bytes <code>50 4B 07 08</code>. All the magic bytes for the zipfiles except the spanned file were broken, from my notes they were <code>50 4B 02 03</code>. To decrypt the file you had to find the zip compressed text (not a file) appended to the file. Most people who asked for help on this challenge knew the magic bytes were wrong but they didn't really know how to fix them and were looking for a tool that would automatically fix it. They were suprised to hear you could edit the hex. When a few teams did that they also changed the spanned zipfile's magic bytes since they are nonstandard but this broke the midi file so they had to go learn about spanned zip archives.</p>
+<h2 id="a-few-things-i-learned-challenges-i-want-to-talk-about">A Few Things I Learned / Challenges I Want To Talk About</h2>
+<p>I mostly worked on Wifi and Reverse Engineering challenges this year so that's what I'll mainly focus on.</p>
+<h3 id="if-you-crack-a-password-and-can-t-login-with-it-double-check-it-in-your-wordlist">If you crack a password and can't login with it double check it in your wordlist</h3>
+<p>There was a challenge where you had to crack a wifi network's hash. So we loaded up aircrack grabbed the hash and threw it into hashcat. Hashcat was able to crack the password using our wordlist in less than a second so we threw it into the flag submission and it was rejected.</p>
+<p><strong>2 Attempts Remain</strong></p>
+<p>Ofcourse we forgot to put it in the flag format so we do that.</p>
+<p><strong>1 Attempt Remains</strong></p>
+<p>Now we were freaking out, we had the password and it was in the flag format but it wasn't taking it. We look over what we have and notice theres a space preceeding the password. At this point we were super cautious since this was a 500 flag. We opened our word list in vim, showed all whitespace characters and noticed theres a space prepended and appended to the password. After making sure our whitespace was in the flag it accepted the flag.</p>
+<p>At the time we didn't realize this challenge was even meaner for other teams since most teams used aircrack to crack the password. Aircrack will trim the spaces off both ends of the password so you wouldn't even be able to catch the space preceding the password like we did with hashcat.</p>
+<h3 id="strip-control-characters-and-unicode-out-of-your-wordlist">Strip control characters and unicode out of your wordlist</h3>
+<p>In a different Wifi challenge we had to crack a wpa3 network's password. The thing about wpa3 is that you can't just grab the hash and pass it to hashcat. We used a tool called <a href="https://github.com/blunderbuss-wctf/wacker">wacker</a>. This tool is really only useful for ctfs for a variety of reasons.</p>
+<p>Having wacker go through our wordlist would've taken about 100 hours, well over the amount of time alloted for the ctf. The box we were given for wifi challenges had 4 interfaces so we chunked up our word list and ran it in parrallel. Our fourth chunk died about half way through because of a control character being in our wordlist for some reason.</p>
+<p>I stripped out all control characters from that chunk that died by cating the chunk into <code>tr -d "[:cntrl:]"</code> and using a shell redirect to overwrite that chunk. I then used <code>tac</code> to reverse the line order so it would start from the bottom just so it wouldn't run through a bunch of passwords it's already tried.</p>
+<p>Now this chunk was instantly dying when loaded in wacker. So I opened it in vim and noticed there were quite a few unicode characters that wacker was choking on. I striped out unicode with <code>iconv -c -f utf-8 -t ascii xad</code>. ("xad" being the fourth chunk) After this we instantly got the password.</p>
+<h3 id="who-need-s-a-buffer-overflow-anyway">Who need's a buffer overflow anyway?</h3>
+<p>In my favorite example of how much better I'm getting at reverse engineering we were given an elf binary. When you execute the binary it asks for a key. When you give it a string it thanks you then exits.</p>
+<p>I ran strings on it and found the flag format but not the flag itself. It seemed like the flag was being obfuscated. I opened it up in ghidra and decompiled it since my assembly isn't the greatest and found there was an if statement that was testing if a var isn't equal to 0. This var was set to 0 when it was initialized and never touched so that statement would always return false. So I patched the assembly to make that if statement always return true. Then when I had ghidra reassembly the binary I executed it asked it nicely to give me the flag.</p>
+<p>After talking with some other teams who solved it apearently the way it was meant to be solved was a buffer overflow attack, which in hindsight makes complete sense since the challenge was called "buffed_up".</p>
+<h3 id="the-challenge-no-one-solved">The Challenge No One Solved</h3>
+<p>I wan't to talk about this challenge a bit because it was pretty interesting. It was another elf binary and when executed it would call out to <code>nullsrc.net/A1A1A-B2B2B</code> and tell you it was checking server health. It would then ask you for a product key and whatever you put in it would make an HTTP Get request to that server with your input. In both instances it would return json with the expected hash, the hash it got, and whether or not that hash was activated.</p>
+<p>When I saw this my first thought was to poison the data. It was making all of these calls over http not https. So I wrote a quick webserver using netcat and made nullsrc.net point to localhost in my hosts file. This server would send back what I would always get for the server health call then after no matter what I sent the server it would return the expected hash, it would say the hash it recieved was the same, and the hash was activated.</p>
+<p>This kinda worked. The binary was super happy, I got new output that suggested I had input the correct key but I didn't see a flag anywhere. I asked the game maker for that challenge and he said he figured someone would do something like this and put the flag server side.</p>
+<p>Some notes on the hash: it was md5 4 times, so the hash for <code>password</code> wouldn't be <code>286755fad04869ca523320acce0dc6a4</code> it would be <code>54fae49d0a9215910fff5b67c804461c</code>. No one was able to find a collision with or crack the expected hash.</p>
+<h3 id="compilation-nah-fam-we-live-interpretively">Compilation? Nah Fam We Live Interpretively!</h3>
+<p>Another elf binary. This time it would take your input do some math on it and give you the output. You had to figure out the input needed for the math to give you a flag. When decompiling it in ghidra I got some seemingly pretty simple math:</p>
+<pre> <code class="no-tick" id="htmlViewer" style="overflow:scroll; color:rgb(235, 219, 178); font-weight:400;background-color:rgb(40, 40, 40);background:rgb(40, 40, 40);display:block;padding: .5em;"><span style="color:rgb(131, 165, 152); font-weight:400;background:rgba(0, 0, 0, 0);">puts</span>("Enter your PIN: ");
+<span style="color:rgb(131, 165, 152); font-weight:400;background:rgba(0, 0, 0, 0);">__isoc99_scanf</span>(&amp;DAT_00102015,&amp;local_15);
+for (local_1c = <span style="color:rgb(211, 134, 155); font-weight:400;background:rgba(0, 0, 0, 0);">0</span>; local_1c &lt; <span style="color:rgb(211, 134, 155); font-weight:400;background:rgba(0, 0, 0, 0);">0</span>x10; local_1c = local_1c + <span style="color:rgb(211, 134, 155); font-weight:400;background:rgba(0, 0, 0, 0);">1</span>) {
+    <span style="color:rgb(131, 165, 152); font-weight:400;background:rgba(0, 0, 0, 0);">putchar</span>((int)(char)(*(byte *)((long)&amp;local_15 + (long)(local_1c % <span style="color:rgb(211, 134, 155); font-weight:400;background:rgba(0, 0, 0, 0);">4</span>)) ^ flag<span style="color:rgb(184, 187, 38); font-weight:400;background:rgba(0, 0, 0, 0);">[local_1c]</span>));
+}
+<span style="color:rgb(131, 165, 152); font-weight:400;background:rgba(0, 0, 0, 0);">putchar</span>(<span style="color:rgb(211, 134, 155); font-weight:400;background:rgba(0, 0, 0, 0);">10</span>);
+...
+return <span style="color:rgb(211, 134, 155); font-weight:400;background:rgba(0, 0, 0, 0);">0</span>;
+ </code>
+</pre>
+<p>So I turned this into python code and added an iterator to bruteforce it. I then just piped the output and greped for the flag:</p>
+<pre> <code class="no-tick" id="htmlViewer" style="overflow:scroll; color:rgb(235, 219, 178); font-weight:400;background-color:rgb(40, 40, 40);background:rgb(40, 40, 40);display:block;padding: .5em;">flag = <span style="color:rgb(131, 165, 152); font-weight:400;background:rgba(0, 0, 0, 0);">bytearray</span>([<span style="color:rgb(211, 134, 155); font-weight:400;background:rgba(0, 0, 0, 0);">126</span>, <span style="color:rgb(211, 134, 155); font-weight:400;background:rgba(0, 0, 0, 0);">122</span>, <span style="color:rgb(211, 134, 155); font-weight:400;background:rgba(0, 0, 0, 0);">118</span>, <span style="color:rgb(211, 134, 155); font-weight:400;background:rgba(0, 0, 0, 0);">114</span>, <span style="color:rgb(211, 134, 155); font-weight:400;background:rgba(0, 0, 0, 0);">67</span>, <span style="color:rgb(211, 134, 155); font-weight:400;background:rgba(0, 0, 0, 0);">83</span>, <span style="color:rgb(211, 134, 155); font-weight:400;background:rgba(0, 0, 0, 0);">79</span>, <span style="color:rgb(211, 134, 155); font-weight:400;background:rgba(0, 0, 0, 0);">90</span>, <span style="color:rgb(211, 134, 155); font-weight:400;background:rgba(0, 0, 0, 0);">74</span>, <span style="color:rgb(211, 134, 155); font-weight:400;background:rgba(0, 0, 0, 0);">84</span>, <span style="color:rgb(211, 134, 155); font-weight:400;background:rgba(0, 0, 0, 0);">94</span>, <span style="color:rgb(211, 134, 155); font-weight:400;background:rgba(0, 0, 0, 0);">65</span>, <span style="color:rgb(211, 134, 155); font-weight:400;background:rgba(0, 0, 0, 0);">89</span>, <span style="color:rgb(211, 134, 155); font-weight:400;background:rgba(0, 0, 0, 0);">88</span>, <span style="color:rgb(211, 134, 155); font-weight:400;background:rgba(0, 0, 0, 0);">67</span>, <span style="color:rgb(211, 134, 155); font-weight:400;background:rgba(0, 0, 0, 0);">72</span>])
+
+<span style="color:rgb(251, 73, 52); font-weight:400;background:rgba(0, 0, 0, 0);">for</span> pin <span style="color:rgb(251, 73, 52); font-weight:400;background:rgba(0, 0, 0, 0);">in</span> <span style="color:rgb(131, 165, 152); font-weight:400;background:rgba(0, 0, 0, 0);">range</span>(<span style="color:rgb(211, 134, 155); font-weight:400;background:rgba(0, 0, 0, 0);">9999</span>):
+    pin = <span style="color:rgb(184, 187, 38); font-weight:400;background:rgba(0, 0, 0, 0);">f"<span style="color:rgb(235, 219, 178); font-weight:400;background:rgba(0, 0, 0, 0);">{pin:<span style="color:rgb(211, 134, 155); font-weight:400;background:rgba(0, 0, 0, 0);">0</span>&gt;{<span style="color:rgb(211, 134, 155); font-weight:400;background:rgba(0, 0, 0, 0);">4</span>}</span>}"</span>
+    <span style="color:rgb(251, 73, 52); font-weight:400;background:rgba(0, 0, 0, 0);">for</span> x <span style="color:rgb(251, 73, 52); font-weight:400;background:rgba(0, 0, 0, 0);">in</span> <span style="color:rgb(131, 165, 152); font-weight:400;background:rgba(0, 0, 0, 0);">range</span>(<span style="color:rgb(211, 134, 155); font-weight:400;background:rgba(0, 0, 0, 0);">16</span>):
+        index = x%<span style="color:rgb(211, 134, 155); font-weight:400;background:rgba(0, 0, 0, 0);">4</span>
+        result = <span style="color:rgb(131, 165, 152); font-weight:400;background:rgba(0, 0, 0, 0);">ord</span>(pin[index]) ^ flag[x]
+        <span style="color:rgb(131, 165, 152); font-weight:400;background:rgba(0, 0, 0, 0);">print</span>(<span style="color:rgb(131, 165, 152); font-weight:400;background:rgba(0, 0, 0, 0);">chr</span>(result), end=<span style="color:rgb(184, 187, 38); font-weight:400;background:rgba(0, 0, 0, 0);">''</span>)
+
+    <span style="color:rgb(131, 165, 152); font-weight:400;background:rgba(0, 0, 0, 0);">print</span>()
+ </code>
+</pre>
+<p>The flag bytes were found by tracing <code>flag[local_1c]</code> in ghidra.</p>
+<h2 id="what-now">What Now?</h2>
+<p>Competing in Jolt has got me in a certain mood. I'm still working on one of the binaries that only 1 team solved. I know what I need to do but doing it has been difficult. It has also gotten me way more motivated to complete my talk for Shell on the Boarder this year.</p>
+
+		<br>
+		<p>Updated: </p>
+		<p>Created: 2023-10-15</p>
+	
+	
+		
+	</body>
+</html>

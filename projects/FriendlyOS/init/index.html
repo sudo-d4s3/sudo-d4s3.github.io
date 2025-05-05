@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title></title>
+		<link href="/css/main.css" rel="stylesheet">
+	</head>
+	<body class='hack'>
+		<nav>
+			
+			<a href="/"><span itemprop="name">[ Home ]</span></a>
+			<a href="/projects"><span itemprop="name">[ Projects ]</span></a>
+			<a href="/write_ups"><span itemprop="name">[ Write Ups ]</span></a>
+			<a href="/scratchpad"><span itemprop="name">[ scratchpad ]</span></a>
+			
+		</nav>
+		
+		
+  <h1>Intro</h1>
+  <p>6 mins</p>
+  
+  
+<span id="continue-reading"></span><h2 id="a-friendly-os-taking-only-the-good-parts-from-macos-1">A friendly OS taking only the good parts from macOS.</h2>
+<p>I had an idea recently to build a linux distro for linux newbies. I'm one of those weirdos who build linux distros for fun. Usually I do it to see if I can implement an idea I found on some other distro and other times its to build a bespoke distro for some embedded machine. Some of the idea's I've tried and to various degrees succeeded in: ripping GNU out of linux, changing the default file structure, and I'm currently working on implementing some of the ideas from nix and guix. As you can imagine these distros aren't very user friendly, you really have to know what you are doing to not rip your hair out in frustration while using them.</p>
+<h3 id="basic-ideas-and-goals">Basic Ideas and Goals</h3>
+<p>As you can imagine I'm not the biggest fan of macOS' ui/ux. I find the ui restrictive and the ux stifling. (At least windows doesn't hide the file system from you.) However, it is hard to argue with how macOS handles program installation. Dragging a single archive to your "Applications" folder then having a daemon handle the rest is probably the easiest way of installing an app through a gui. Then to remove it you just remove the file from the "Applications" and theoretically you don't have to worry about any orphaned dependencies or random junk <del>mostly proprietary</del> apps like to spew all across your filesystem.</p>
+<p>On linux we have similar systems that could implement this and they all do it in a slightly different way. With everything in the linux ecosystem this is because people value different pros/cons. For the purposes of this distro I think AppImages fit the bill nicely.</p>
+<p>AppImages are essentially a small loader binary with a rootfs attached that has everything that would be needed to run a particular app. This means that for the most part they don't require any special software to run, unlike say snaps or flatpacks. Now this might not be that big of a pro since we're going to be running a daemon anyways.</p>
+<p>For a Proof-of-Concept I think the <a href="https://github.com/TheAssassin/AppImageLauncher">AppImageLauncher</a> would suffice. It's a daemon that watches the "Applications" folder for any new AppImage and it then handles setting the AppImage to be executable, the creation of .desktop files for integration into start menu and app launchers and it handles any permissions issues you might run into.</p>
+<p>Now since most people use Windows for their operating system most people are used to going to various websites to install software. This creates a problem for us for a couple reasons: Websites that auto-detect a user is using linux will likely give them a .deb or .rpm even if there is an AppImage available, and a lot of software developers will only support a handful of distro-specific package formats (.deb and .rpm).</p>
+<p>One of the ways we can get around this is by having an appstore. macOS users are already used to this for Apple-sanctioned software but I'm really not sure how many Windows and Linux users actually use their respective appstores. Since this distro is aiming for average people my assumption is that they would use the provided appstore instead of seeking out binaries on the web as long as the appstore is easy to use and access. The thought process behind this assumption is that theoretically they know it's not Windows so they think that they have to install software a special way and if we point out the appstore that tells them the "special" way to install software even though going to a website and downloading a regular package and just double clicking would still be possible based on my helpdesk experience I don't think the average person would think to do that. There are a couple different AppImage stores, I need to do more research to find the one I want to use for this project.</p>
+<p>This is the main goal of this project. Use AppImages for any user-installed software and setup a store for ease of use.</p>
+<h3 id="extra-goals">Extra Goals</h3>
+<p>Unifying the GUI in terms of ui is always going to be top priority in terms of extra goals</p>
+<p>Setting up zfs on the root drive while automating and attaching applets to the gui so average users can actually take advantage of some of some of its features. (Mostly snapshots)</p>
+<p>Setting up a timemachine-like backup system would be nice</p>
+<h3 id="poc-implementation-ideas">POC Implementation Ideas</h3>
+<p>I'm not really interested in bootstrapping this distro as of now so I'll probably use some minimal distro to build off of. Probably Arch. If this does get past the proof-of-concept phase I'd like to either build off of some immutable distro or bootstrap my own. An immutable distro would allow for better version control over the filesystem which facilitates easier rollbacks in case something breaks and it prevents any accidental corruption from the user. (Reminder <code>dd</code> is also known as "disk destroyer" and <code>rm -rf /</code> is easier than deleting system32)</p>
+<p>I'm thinking about using plasma as the DE just for the poc. I might stick with it if it goes farther than poc but honestly its a bit overwhelming to try and maintain with config scripts. It's easy to config in the provided gui so it would be good from an end user perspective but setting the base config is a bit daunting.</p>
+<p>I remember there being quite a few mac-like app docks, I'll throw one of those in for the lolz.</p>
+<p>I am keeping gaming in mind so I need to test steam in an appimage and determine whether to use lutris or hero for non-steam games.</p>
+<h3 id="things-to-do-if-this-project-expands">Things to do if this project expands</h3>
+<p>Do a bit more research into what specifically and why people like macOS' ui/ux since I never really groked it and possibly implement some of those features.</p>
+
+  <br>
+  <p>Updated: </p>
+  <p>Created: 2023-07-03</p>
+	
+		
+	</body>
+</html>

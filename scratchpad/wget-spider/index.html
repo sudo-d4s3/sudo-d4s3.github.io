@@ -1,54 +1,48 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
 		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title></title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="stylesheet" href="https://blog.d4s3.xyz/css/main.css" />
+		<link href="/css/main.css" rel="stylesheet">
 	</head>
 	<body class='hack'>
 		<nav>
 			
-			<a href="https:&#x2F;&#x2F;blog.d4s3.xyz/"><span itemprop="name">[ Home ]</span></a>
-			
-			<a href="https:&#x2F;&#x2F;blog.d4s3.xyz/projects"><span itemprop="name">[ Projects ]</span></a>
-			
-			<a href="https:&#x2F;&#x2F;blog.d4s3.xyz/write_ups"><span itemprop="name">[ Write Ups ]</span></a>
-			
-			<a href="https:&#x2F;&#x2F;blog.d4s3.xyz/scratchpad"><span itemprop="name">[ scratchpad ]</span></a>
+			<a href="/"><span itemprop="name">[ Home ]</span></a>
+			<a href="/projects"><span itemprop="name">[ Projects ]</span></a>
+			<a href="/write_ups"><span itemprop="name">[ Write Ups ]</span></a>
+			<a href="/scratchpad"><span itemprop="name">[ scratchpad ]</span></a>
 			
 		</nav>
 		
-			
-	<h1></h1>
-	
-	<p> 1 mins </p>
-
-	<span id="continue-reading"></span><h1 id="wget-spider">wget spider</h1>
+		
+  <h1>wget spider</h1>
+  <p>1 mins</p>
+  
+  <span id="continue-reading"></span>
 <p><code>wget --mirror --convert-links --page-requisites --adjust-extension &lt;site-url&gt;</code></p>
 <ul>
-<li><strong>--mirror:</strong> make the download recursive</li>
-<li><strong>--convert-links:</strong> convert links to work offline ex. <code>./</code> instead of <code>/</code></li>
-<li><strong>--page-requisites:</strong> make sure to download js and css</li>
-<li><strong>--adjust-extension:</strong> append missing extensions (mostly for html)</li>
+<li><strong>--mirror</strong>: make the download recursive</li>
+<li><strong>--convert-links</strong>: convert links to work offline ex. <code>./</code> instead of <code>/</code></li>
+<li><strong>--page-requisites</strong>: make sure to download js and css</li>
+<li><strong>--adjust-extension</strong>: append missing extensions (mostly for html)</li>
 </ul>
 <h3 id="warc">WARC</h3>
 <p>If I'm crawling a site for an offline backup I probably need a zim file. Wget can't output a zim file but it can output a warc file which can be converted to a zim file using <a href="https://github.com/openzim/warc2zim">warc2zim</a></p>
 <ul>
-<li>**--warc-file=**filename: enables warc export, standard output will also happen</li>
+<li><strong>--warc-file</strong>=filename: enables warc export, standard output will also happen</li>
 </ul>
 <h3 id="cross-domain">Cross domain</h3>
 <ul>
-<li><strong>--span-hosts:</strong> crawl cross domain links</li>
-<li><strong>--domains:</strong> make sure you only crawl the domains you want to (don't want to accidentally crawl the whole internet)</li>
+<li><strong>--span-hosts</strong>: crawl cross domain links</li>
+<li><strong>--domains</strong>: make sure you only crawl the domains you want to (don't want to accidentally crawl the whole internet)</li>
 </ul>
 
-
-	<br />
-	<p>Last Updated: </p>
-	<p>Created: </p>
-
+  <br>
+  <p>Updated: </p>
+  <p>Created: </p>
+	
 		
-		</div>
 	</body>
 </html>
